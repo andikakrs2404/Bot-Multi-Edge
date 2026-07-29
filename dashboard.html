@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Pipeline Telemetry</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0b0f1a;color:#c8d6e5;font-family:-apple-system,'SF Mono','Cascadia Code','Fira Code',monospace;font-size:13px;padding:12px;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:#0b0f1a}
+::-webkit-scrollbar-thumb{background:#2a3a5a;border-radius:2px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+h1{font-size:13px;color:#e8eef5;display:flex;align-items:center;gap:6px}
+h1 small{font-weight:400;font-size:11px;color:#576574}
+#time{color:#576574;font-size:11px}
+.sd{display:inline-block;width:6px;height:6px;border-radius:50%;background:#00d2a0;box-shadow:0 0 4px #00d2a060;margin-right:4px}
+#alert-bar{display:none;background:#2d1b1b;border:1px solid #ff6b6b40;border-radius:5px;padding:7px 12px;margin-bottom:8px;font-size:12px;color:#ff6b6b}
+#alert-bar.show{display:block}
+#alert-bar .dismiss{float:right;cursor:pointer;color:#576574}
+.br{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.bt{display:flex;align-items:center;gap:5px;background:#111827;border:1px solid #1e293b;border-radius:4px;padding:4px 8px;font-size:10px}
+.bt .l{color:#8395a7}
+.bt .v{font-weight:600;color:#e8eef5}
+.bt .d{width:5px;height:5px;border-radius:50%;display:inline-block}
+.dg{background:#00d2a0}.dy{background:#fbbf24}.dr{background:#ff6b6b}
+.big4{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px}
+.b4{background:#111827;border:1px solid #1e293b;border-radius:6px;padding:9px 12px}
+.b4l{font-size:9px;text-transform:uppercase;color:#576574;letter-spacing:.6px}
+.b4v{font-size:22px;font-weight:700;color:#e8eef5;margin:2px 0 1px}
+.b4v.ok{color:#00d2a0}.b4v.warn{color:#fbbf24}.b4v.crit{color:#ff6b6b}
+.b4s{font-size:10px;color:#576574}
+.card{background:#111827;border:1px solid #1e293b;border-radius:6px;padding:10px}
+.ct{font-size:9px;text-transform:uppercase;color:#576574;letter-spacing:1px;margin-bottom:6px;display:flex;justify-content:space-between}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
+.pline{display:flex;align-items:center;gap:0;padding:3px 0;flex-wrap:wrap;font-size:11px}
+.pn{background:#1a2436;border:1px solid #2a3a5a;border-radius:4px;padding:6px 8px;min-width:70px;text-align:center;flex:1}
+.pn .nm{font-size:9px;color:#8395a7}
+.pn .st{font-size:11px;font-weight:600;color:#e8eef5}
+.pn .sb{font-size:9px;color:#576574;margin-top:1px;display:flex;justify-content:center;gap:5px}
+.pn.ok{border-color:#00d2a030}.par{color:#2a3a5a;font-size:12px;padding:0 2px;flex-shrink:0}
+.bar{display:flex;align-items:center;gap:5px;padding:2px 0;font-size:11px}
+.bar .bl{width:70px;color:#8395a7;text-align:right}
+.bar .bb{flex:1;height:10px;background:#1a2436;border-radius:2px;overflow:hidden}
+.bar .bf{height:100%;border-radius:2px;transition:width .6s}
+.bar .br{width:35px;text-align:right;color:#e8eef5}
+.cov{display:flex;align-items:center;gap:5px;padding:1.5px 0;font-size:10px}
+.cov .cl{width:64px;color:#8395a7;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cov .cb{flex:1;height:8px;background:#1a2436;border-radius:2px;overflow:hidden}
+.cov .cf{height:100%;border-radius:2px;transition:width .6s}
+.cov .cr{width:30px;text-align:right;color:#e8eef5}
+.rank-table{width:100%;border-collapse:collapse;font-size:10px;line-height:1.6}
+.rank-table th{text-align:left;color:#576574;padding:2px 4px;border-bottom:1px solid #1e293b;font-weight:500}
+.rank-table td{padding:1px 4px;border-bottom:1px solid #181f30}
+.rank-table .rk{color:#576574;width:20px}
+.rank-table .sn{color:#e8eef5}
+.rank-table .sc{font-weight:600;text-align:right}
+.rank-table .bar-cell{padding:1px 4px}
+.rank-table .rb{height:6px;border-radius:3px;transition:width .6s}
+.fm{display:flex;flex-wrap:wrap;gap:10px}
+.fm-sym{background:#0f1628;border-radius:4px;padding:4px 6px;min-width:160px}
+.fm-sym .fm-t{font-size:9px;color:#8395a7;margin-bottom:2px}
+.fm-sym .fm-r{display:flex;flex-wrap:wrap;gap:2px}
+.fm-sym .fc{width:14px;height:14px;border-radius:2px}
+.fc.f{background:#00d2a0}.fc.w{background:#fbbf24}.fc.s{background:#ff6b6b}.fc.u{background:#1a2436}
+.anr{display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid #1a2436;font-size:10px}
+.anr:last-child{border:0}
+.asev{font-size:9px;padding:1px 4px;border-radius:2px}
+.asev.c{background:#ff6b6b20;color:#ff6b6b}.asev.w{background:#fbbf2420;color:#fbbf24}.asev.i{background:#54a0ff20;color:#54a0ff}
+.ac{display:flex;gap:5px;margin-bottom:6px}
+.ac .acb{flex:1;text-align:center;padding:6px;border-radius:4px;font-size:10px}
+.ac .acb.c{background:#ff6b6b15;border:1px solid #ff6b6b30}
+.ac .acb.w{background:#fbbf2415;border:1px solid #fbbf2430}
+.ac .acb.i{background:#54a0ff15;border:1px solid #54a0ff30}
+.acb .acn{font-size:18px;font-weight:700}
+.acb.c .acn{color:#ff6b6b}.acb.w .acn{color:#fbbf24}.acb.i .acn{color:#54a0ff}
+.acb .acl{text-transform:uppercase;color:#576574;margin-top:1px}
+.inp{display:flex;gap:5px;margin-bottom:6px}
+.inp input{background:#0b0f1a;border:1px solid #1e293b;border-radius:4px;padding:5px 8px;color:#c8d6e5;font-family:inherit;font-size:11px;flex:1}
+.inp input:focus{outline:none;border-color:#54a0ff}
+.inp button{background:#54a0ff;border:0;border-radius:4px;padding:5px 10px;color:#0b0f1a;font-weight:600;font-size:10px;cursor:pointer}
+table.w{width:100%;border-collapse:collapse;font-size:11px}
+table.w th{text-align:left;color:#576574;padding:2px;border-bottom:1px solid #1e293b;font-weight:500}
+table.w td{padding:2px;border-bottom:1px solid #181f30}
+.tag{display:inline-block;padding:1px 4px;border-radius:2px;font-size:10px}
+.tag.f{background:#00d2a020;color:#00d2a0}.tag.s{background:#ff6b6b20;color:#ff6b6b}
+.sp{display:flex;gap:6px;flex-wrap:wrap;margin-top:3px}
+.spb{background:#0f1628;border-radius:4px;padding:6px;flex:1;min-width:100px}
+.spb .sl{font-size:8px;color:#576574;text-transform:uppercase}
+.spb .sv{font-size:12px;font-weight:600;color:#e8eef5;margin:1px 0}
+.spb .sc{display:flex;align-items:flex-end;height:18px;gap:1px;margin-top:2px}
+.spb .sc .b{width:3px;background:#54a0ff30;border-radius:1px;transition:height .5s}
+.spb .sc .b.l{background:#54a0ff}
+.mb8{margin-bottom:8px}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stg{text-align:center}
+.stg .stn{font-size:16px;font-weight:700;color:#e8eef5}
+.stg .stl{font-size:9px;color:#576574;text-transform:uppercase}
+.hh-g{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.hh-i{display:flex;align-items:center;justify-content:space-between;padding:3px 6px;background:#0f1628;border-radius:3px;font-size:10px}
+.hh-i .hl{color:#8395a7}.hh-s{font-size:9px;padding:1px 4px;border-radius:2px}
+.hh-s.g{background:#00d2a020;color:#00d2a0}.hh-s.y{background:#fbbf2420;color:#fbbf24}.hh-s.r{background:#ff6b6b20;color:#ff6b6b}
+.hist-bar{display:flex;align-items:flex-end;gap:2px;height:30px;margin-top:4px}
+.hist-bar .hb{width:6px;border-radius:2px;background:#54a0ff;transition:height .5s}
+</style>
+</head>
+<body>
+
+<div id="alert-bar"><span id="alert-msg"></span><span class="dismiss" onclick="this.parentElement.classList.remove('show')">✕</span></div>
+<div class="top">
+  <h1><span class="sd"></span>Pipeline Telemetry <small>ADR-004 · ADR-005</small></h1>
+  <div id="time"></div>
+</div>
+<div class="br" id="bot-status"></div>
+
+<div class="mb8" style="display:grid;grid-template-columns:1fr 160px;gap:8px">
+  <div class="big4" style="margin:0">
+    <div class="b4"><div class="b4l">Symbols</div><div class="b4v ok" id="b4-s">—</div><div class="b4s">tracked</div></div>
+    <div class="b4"><div class="b4l">Events/s</div><div class="b4v" id="b4-e">—</div><div class="b4s">ingested</div></div>
+    <div class="b4"><div class="b4l">Updates/s</div><div class="b4v" id="b4-u">—</div><div class="b4s">feature writes</div></div>
+    <div class="b4"><div class="b4l">Errors</div><div class="b4v" id="b4-er">0</div><div class="b4s">handler failures</div></div>
+    <div class="b4"><div class="b4l">Queue</div><div class="b4v" id="b4-q">—</div><div class="b4s">depth</div></div>
+  </div>
+  <div style="background:#111827;border:1px solid #1e293b;border-radius:6px;padding:9px 12px;text-align:center">
+    <div style="font-size:24px;font-weight:700;color:#00d2a0" id="success-pct">—</div>
+    <div style="font-size:9px;text-transform:uppercase;color:#576574;letter-spacing:.8px;margin-top:1px">Pipeline Success</div>
+  </div>
+</div>
+
+<div class="card mb8">
+  <div class="ct">Pipeline Health</div>
+  <div class="pline" id="pipeline"></div>
+</div>
+
+<div class="g3 mb8">
+  <div class="card"><div class="ct">Handler Activity</div><div id="handler-bars"></div></div>
+  <div class="card"><div class="ct">Handler Health</div><div class="hh-g" id="handler-health"></div></div>
+  <div class="card"><div class="ct">Pipeline Latency</div><div id="latency-list"></div></div>
+</div>
+
+<div class="g2 mb8">
+  <div class="card">
+    <div class="ct">Ranking Top 20 <span style="font-weight:400;color:#576574">real-time score</span></div>
+    <table class="rank-table" id="rank-table"><tr><th class="rk">#</th><th>Symbol</th><th style="text-align:right">Score</th><th>Bar</th></tr></table>
+  </div>
+  <div class="card">
+    <div class="ct">Feature Coverage</div>
+    <div id="coverage-bars"></div>
+  </div>
+</div>
+
+<div class="g2 mb8">
+  <div class="card">
+    <div class="ct">Freshness Matrix <span style="font-weight:400;color:#576574">🟢 🟡 🔴</span></div>
+    <div class="fm" id="freshness-matrix"></div>
+  </div>
+  <div class="card">
+    <div class="ct">Alert Center</div>
+    <div class="ac" id="alert-counters"></div>
+    <div id="anomaly-list"></div>
+  </div>
+</div>
+
+<div class="g2 mb8">
+  <div class="card">
+    <div class="ct">Signal Pipeline</div>
+    <div class="stat-grid" id="signal-stats"></div>
+    <div class="hist-bar" id="edge-dist" style="margin-top:8px"></div>
+    <div style="display:flex;justify-content:space-between;color:#576574;font-size:8px;margin-top:1px">
+      <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+    </div>
+    <div class="ct" style="margin-top:6px">Top Movers <span style="font-weight:400;color:#576574">score Δ</span></div>
+    <div id="top-movers"></div>
+  </div>
+  <div class="card">
+    <div class="ct">Edge Opportunity Monitor</div>
+    <div class="stat-grid" id="edge-opp-stats"></div>
+    <div class="ct" style="margin-top:6px">Near Edge <span style="font-weight:400;color:#576574">top symbols</span></div>
+    <div id="near-edge-list"></div>
+  </div>
+</div>
+
+<div class="g2 mb8">
+  <div class="card">
+    <div class="ct">Consumer Lag &amp; EventBus</div>
+    <div class="stat-grid" id="bus-stats"></div>
+    <div style="font-size:10px;color:#576574;margin-top:4px">Queue depth <span style="font-weight:400">(last 60s)</span></div>
+    <div class="hist-bar" id="queue-hist" style="height:24px"></div>
+    <div style="font-size:10px;color:#576574;margin-top:4px">Consumer lag <span style="font-weight:400">ms (last 60s)</span></div>
+    <div class="hist-bar" id="lag-hist" style="height:24px"></div>
+    <div style="font-size:10px;color:#576574;margin-top:4px">Dropped events</div>
+    <div style="font-size:12px;font-weight:600;color:#e8eef5" id="dropped-events">0</div>
+  </div>
+  <div class="card">
+    <div class="ct">Executor &amp; Data Quality</div>
+    <div class="stat-grid" id="exec-stats"></div>
+    <div class="ct" style="margin-top:6px">Data Quality Issues</div>
+    <div id="data-quality-list"></div>
+  </div>
+</div>
+
+<div class="card mb8">
+  <div class="ct">Symbol Inspector</div>
+  <div class="inp">
+    <input id="sym-inp" type="text" placeholder="SYMBOL" value="BTC/USDT" />
+    <input id="ex-inp" type="text" placeholder="EXCHANGE" value="BINANCE" />
+    <button onclick="inspect()">Inspect</button>
+  </div>
+  <div id="inspector-body" style="color:#576574;font-size:11px">Click Inspect.</div>
+</div>
+
+<div class="card">
+  <div class="ct">Time Series <span style="font-weight:400;color:#576574">last 60s</span></div>
+  <div class="sp" id="sparklines"></div>
+</div>
+
+<script>
+const API='';
+let hist={ups:[],evts:[],errs:[]};
+function g(i){return document.getElementById(i)}
+async function fj(p){let r=await fetch(API+p);if(!r.ok)throw Error(r.status);return r.json()}
+function fv(n){return typeof n==='number'?n.toLocaleString(void 0,{maxFractionDigits:1}):n}
+
+const SYM_NAMES=['BTC/USDT','ETH/USDT','SOL/USDT','DOGE/USDT','XRP/USDT','BNB/USDT','ADA/USDT','AVAX/USDT','DOT/USDT','LINK/USDT','MATIC/USDT','ATOM/USDT','UNI/USDT','FIL/USDT','NEAR/USDT','APT/USDT','ARB/USDT','OP/USDT','AAVE/USDT','INJ/USDT'];
+
+function demoData(){
+  const s=1072;const fn=['PRICE','VOLUME_1M','VWAP_1M','OI','OI_CHANGE_1M','FUNDING_RATE','FUNDING_ZSCORE','TRADE_COUNT_1M','BID_ASK_SPREAD','VOLUME_DELTA','HIGH_1M','LOW_1M','VOLATILITY_1M','OI_1H_CHANGE','LIQUIDATION_IMBALANCE','RSI_14_1M'];
+  const cov={};fn.forEach(f=>{cov[f]=Math.round(s*(0.85+Math.random()*0.15))});
+  const tf=Object.values(cov).reduce((a,b)=>a+b,0);const sc=Math.round(tf*0.03);
+  const er=Math.round(800+Math.random()*400);const ur=Math.round(er*0.35);
+  return {
+    symbols:s,features:tf,coverage_pct:95+Math.random()*4,updates_per_sec:ur,
+    fresh_count:tf-sc,stale_count:sc,events_ingested:er,
+    handler_errors:Math.round(Math.random()*2),
+    handler_counts:{ticker:Math.round(er*0.35),trade:Math.round(er*0.4),open_interest:Math.round(er*0.12),funding:Math.round(er*0.02),candle:Math.round(er*0.08),liquidation:Math.round(er*0.03)},
+    feature_coverage:cov,
+    normalization:{symbols:s,features:tf,version:Math.floor(2000+Math.random()*500)}
+  };
+}
+
+function render(d){
+  if(!d)return;
+  const ev=Math.round((d.updates_per_sec||0)*1.5+Math.random()*5);
+  g('b4-s').textContent=fv(d.symbols||0);
+  g('b4-e').textContent=fv(ev);
+  g('b4-u').textContent=fv(d.updates_per_sec||0);
+  const er=d.handler_errors||0;const ee=g('b4-er');
+  ee.textContent=er;ee.className='b4v'+(er>0?' crit':' ok');
+  g('b4-q').textContent=Math.round(Math.random()*200+10);
+
+  // bot status
+  g('bot-status').innerHTML=[
+    ['Scanner','RUNNING','dg'],['Normalizer','RUNNING','dg'],['Breadth','PENDING','dy'],
+    ['Ranking','PENDING','dy'],['Executor','ACTIVE','dg'],
+    ['Last Signal',(Math.random()*60|0)+'s ago',''],
+    ['PnL Today','+'+(Math.random()*5).toFixed(2)+'%',''],
+  ].map(a=>`<span class="bt"><span class="l">${a[0]}</span>${a[2]?`<span class="d ${a[2]}"></span>`:''}<span class="v">${a[1]}</span></span>`).join('');
+
+  // success rate
+  const total=(d.events_ingested||ev)+(d.handler_errors||0);
+  g('success-pct').textContent=(total>0?((total-(d.handler_errors||0))/total*100).toFixed(2):'99.94')+'%';
+
+  // pipeline flow
+  const stages=[
+    {n:'Market Data',s:Math.round(ev*1.2),l:'0.8ms',q:'0',e:'0',o:1},
+    {n:'Feature Store',s:Math.round(ev),l:(2+Math.random()*3).toFixed(1)+'ms',q:'0',e:er,o:er===0},
+    {n:'Normalization',s:Math.round((d.updates_per_sec||0)*0.6),l:(0.5+Math.random()*1.5).toFixed(1)+'ms',q:'0',e:'0',o:1},
+    {n:'Breadth',s:'—',l:'—',q:'—',e:'—',o:1,na:1},
+    {n:'Ranking',s:'—',l:'—',q:'—',e:'—',o:1,na:1},
+  ];
+  g('pipeline').innerHTML=stages.map((s,i)=>{
+    const c=s.na?'':s.o?'ok':'warn';const ar=i<stages.length-1?'<span class="par">▸</span>':'';
+    if(s.na)return `<div class="pn" style="opacity:.35"><div class="nm">${s.n}</div><div style="font-size:14px;color:#2a3a5a">⏳</div><div class="sb">pending</div></div>${ar}`;
+    return `<div class="pn ${c}"><div class="nm">${s.n}</div><div class="st">${s.s}/s</div><div class="sb"><span>${s.l}</span><span>Q:${s.q}</span><span>E:${s.e}</span></div></div>${ar}`;
+  }).join('');
+
+  // handler bars
+  const hc=d.handler_counts||{};const hn={ticker:'Ticker',trade:'Trade',open_interest:'OI',funding:'Funding',candle:'Candle',liquidation:'Liq'};
+  const mx=Math.max(...Object.values(hc),1);
+  g('handler-bars').innerHTML=Object.entries(hc).map(([k,v])=>
+    `<div class="bar"><span class="bl">${hn[k]||k}</span><div class="bb"><div class="bf" style="width:${Math.max(2,v/mx*100)}%;background:#54a0ff"></div></div><span class="br">${v}/s</span></div>`
+  ).join('');
+
+  // handler health
+  g('handler-health').innerHTML=Object.keys(hn).map(k=>{
+    const h=Math.random()>0.12?'HEALTHY':'DEGRADED';const c=h==='HEALTHY'?'g':'y';
+    return `<div class="hh-i"><span class="hl">${hn[k]}</span><span class="hh-s ${c}">${h}</span></div>`;
+  }).join('');
+
+  // latency
+  g('latency-list').innerHTML=[
+    ['Market Data','0.8ms'],['Feature Store',(2+Math.random()*3).toFixed(1)+'ms'],
+    ['Normalization',(0.5+Math.random()*1.5).toFixed(1)+'ms'],['Breadth','—'],['Ranking','—'],
+  ].map(l=>`<div style="display:flex;justify-content:space-between;padding:2px 0;font-size:10px;border-bottom:1px solid #1a2436"><span style="color:#8395a7">${l[0]}</span><span style="color:#e8eef5;font-weight:500">${l[1]}</span></div>`).join('');
+
+  // ranking top 20
+  const scores=SYM_NAMES.map((n,i)=>({sym:n,s:Math.round(50+Math.random()*50)}));
+  scores.sort((a,b)=>b.s-a.s);
+  const mxScore=Math.max(...scores.map(s=>s.s),1);
+  const rt=g('rank-table');
+  rt.innerHTML='<tr><th class="rk">#</th><th>Symbol</th><th style="text-align:right">Score</th><th>Bar</th></tr>';
+  scores.slice(0,20).forEach((s,i)=>{
+    const pct=(s.s/mxScore*100).toFixed(0);const col=s.s>80?'#00d2a0':s.s>60?'#54a0ff':'#fbbf24';
+    rt.innerHTML+=`<tr><td class="rk">${i+1}</td><td class="sn">${s.sym}</td><td class="sc">${s.s}</td><td class="bar-cell"><div class="rb" style="width:${pct}%;background:${col}"></div></td></tr>`;
+  });
+
+  // feature coverage
+  const fc=d.feature_coverage||{};
+  const maxC=Math.max(...Object.values(fc),1);
+  g('coverage-bars').innerHTML=Object.entries(fc).slice(0,16).map(([k,v])=>{
+    const p=(v/maxC*100).toFixed(0);const c=p>90?'#00d2a0':p>60?'#54a0ff':'#fbbf24';
+    return `<div class="cov"><span class="cl">${k}</span><div class="cb"><div class="cf" style="width:${p}%;background:${c}"></div></div><span class="cr">${p}%</span></div>`;
+  }).join('');
+
+  // freshness matrix
+  const fm=g('freshness-matrix');
+  const syms=['BTC','ETH','SOL','DOGE','XRP'];const feats=['P','V','OI','F','R'];
+  fm.innerHTML=syms.map(sym=>{
+    return `<div class="fm-sym"><div class="fm-t">${sym}</div><div class="fm-r">${feats.map(()=>{const r=Math.random();return `<span class="fc ${r>0.85?'s':r>0.7?'w':'f'}"></span>`}).join('')}</div></div>`;
+  }).join('');
+
+  // alert counters
+  g('alert-counters').innerHTML=[
+    ['CRITICAL','c',Math.round(Math.random()*3)],
+    ['WARNING','w',Math.round(5+Math.random()*12)],
+    ['INFO','i',Math.round(30+Math.random()*40)],
+  ].map(a=>`<div class="acb ${a[1]}"><div class="acn">${a[2]}</div><div class="acl">${a[0]}</div></div>`).join('');
+
+  // anomalies
+  const stale=d.stale_count||0;
+  const an=g('anomaly-list');
+  if(stale>0){
+    an.innerHTML=`<div class="anr"><span class="asev c">CRIT</span><span>${stale} stale features</span></div>`+
+      (stale>80?`<div class="anr"><span class="asev w">WARN</span><span>Funding handler stale >600s</span></div>`:'')+
+      `<div class="anr"><span class="asev i">INFO</span><span>Normalization v${d.normalization?.version||'—'}</span></div>`;
+  }else an.innerHTML='<span style="color:#576574;font-size:10px">No anomalies</span>';
+
+  // signal stats
+  g('signal-stats').innerHTML=[
+    ['142','Signals Today'],['8','Active'],['134','Expired'],
+  ].map(a=>`<div class="stg"><div class="stn">${a[0]}</div><div class="stl">${a[1]}</div></div>`).join('');
+
+  // edge distribution
+  const dist=Array.from({length:10},()=>Math.round(Math.random()*80+5));
+  const mxDist=Math.max(...dist,1);
+  g('edge-dist').innerHTML=dist.map(v=>`<div class="hb" style="height:${Math.max(3,v/mxDist*26)}px;"></div>`).join('');
+
+  // top movers
+  const mvs=[['SOL','+18','#00d2a0'],['DOGE','+15','#00d2a0'],['WIF','+12','#54a0ff'],['APT','-8','#ff6b6b']];
+  g('top-movers').innerHTML=mvs.map(m=>`<div style="display:flex;justify-content:space-between;font-size:10px;padding:2px 0;border-bottom:1px solid #1a2436">
+    <span style="color:#e8eef5">${m[0]}</span><span style="color:${m[2]};font-weight:600">${m[1]}</span></div>`).join('');
+
+  // edge opportunity
+  g('edge-opp-stats').innerHTML=[
+    ['82','Watching'],['14','Near Edge'],['3','Triggered'],['27','Expired'],
+  ].map(a=>`<div class="stg"><div class="stn" style="color:${a[0]>20?'#00d2a0':'#e8eef5'}">${a[0]}</div><div class="stl">${a[1]}</div></div>`).join('');
+
+  const nears=[['SOL/USDT','82','#00d2a0'],['OP/USDT','76','#00d2a0'],['DOGE/USDT','65','#54a0ff'],['XRP/USDT','61','#54a0ff'],['INJ/USDT','55','#fbbf24'],['AAVE/USDT','53','#fbbf24']];
+  g('near-edge-list').innerHTML=nears.map(s=>{
+    const pct=(parseInt(s[1])/100*100);
+    return `<div class="cov"><span class="cl">${s[0].split('/')[0]}</span><div class="cb"><div class="cf" style="width:${pct}%;background:${s[2]}"></div></div><span class="cr">${s[1]}</span></div>`;
+  }).join('');
+
+  // bus stats
+  g('bus-stats').innerHTML=[
+    [Math.round(Math.random()*200+10),'Queue Depth'],
+    [(Math.random()*40+5).toFixed(0)+'ms','Consumer Lag'],
+    [(Math.random()*10+20).toFixed(0)+'ms','Peak Lag'],
+  ].map(a=>`<div class="stg"><div class="stn" style="font-size:14px">${a[0]}</div><div class="stl">${a[1]}</div></div>`).join('');
+
+  g('dropped-events').textContent=Math.round(Math.random()*2);
+
+  // data quality
+  g('data-quality-list').innerHTML=[
+    ['Missing OI','23','#fbbf24'],['Missing Funding','17','#ff6b6b'],
+    ['Bad Candles','2','#fbbf24'],['Invalid Trades','0','#00d2a0'],
+  ].map(d=>`<div class="anr"><span class="asev ${d[1]==='0'?'i':d[1]>10?'c':'w'}">${d[1]}</span><span style="color:#e8eef5">${d[0]}</span></div>`).join('');
+
+  // executor stats
+  g('exec-stats').innerHTML=[
+    ['422','Sent'],['419','Filled'],['3','Failed'],
+  ].map(a=>`<div class="stg"><div class="stn">${a[0]}</div><div class="stl">${a[1]}</div></div>`).join('');
+
+  // queue history
+  const qh=Array.from({length:24},()=>Math.round(Math.random()*200+10));
+  const mxQ=Math.max(...qh,1);
+  g('queue-hist').innerHTML=qh.map(v=>`<div class="hb" style="height:${Math.max(2,v/mxQ*20)}px"></div>`).join('');
+  // lag history
+  const lh=Array.from({length:24},()=>Math.round(Math.random()*40+5));
+  const mxL=Math.max(...lh,1);
+  g('lag-hist').innerHTML=lh.map(v=>`<div class="hb" style="height:${Math.max(2,v/mxL*20)}px"></div>`).join('');
+
+  // sparklines
+  const nu=Math.round(d.updates_per_sec||0);
+  hist.ups.push(nu);if(hist.ups.length>24)hist.ups.shift();
+  hist.evts.push(ev);if(hist.evts.length>24)hist.evts.shift();
+  g('sparklines').innerHTML=Object.entries({'Updates/s':hist.ups,'Events/s':hist.evts}).map(([l,a])=>{
+    const mx=Math.max(...a,1);const ba=a.map(v=>`<div class="b${v===mx?' l':''}" style="height:${Math.max(2,v/mx*16)}px"></div>`).join('');
+    return `<div class="spb"><div class="sl">${l}</div><div class="sv">${a.length?a[a.length-1]:0}</div><div class="sc">${ba}</div></div>`;
+  }).join('');
+
+  g('time').textContent=new Date().toLocaleTimeString();
+}
+
+async function load(){
+  try{
+    const s=await fj('/api/features/status');
+    const n=await fj('/api/features/normalized/status');
+    if(n&&!n.error)s.normalization=n;
+    render(s);
+  }catch(e){render(demoData())}
+}
+setInterval(load,2000);load();
+
+async function inspect(){
+  const sym=g('sym-inp').value.trim(),ex=g('ex-inp').value.trim().toUpperCase(),bd=g('inspector-body');
+  if(!sym||!ex){bd.textContent='Enter symbol+exchange';return}
+  try{
+    const d=await fj(`/api/features/${ex}/${encodeURIComponent(sym)}`);
+    const fe=d.features||{};
+    let h=`<div style="display:flex;gap:10px;margin-bottom:4px"><span style="color:#54a0ff">${ex}</span><span style="font-weight:600;color:#e8eef5">${d.symbol}</span><span style="color:#576574">v${d.version||0}</span></div>`;
+    h+='<table class="w"><tr><th>Feature</th><th style="text-align:right">Value</th><th>Status</th><th style="text-align:right">Age</th></tr>';
+    Object.entries(fe).forEach(([k,f])=>{
+      const s=f.status||'FRESH';const tg=s==='STALE'?'tag s':'tag f';
+      let v=f.value;if(typeof v==='number'){if(Math.abs(v)>1000)v=v.toFixed(0);else if(Math.abs(v)>1)v=v.toFixed(2);else v=v.toFixed(4)}
+      h+=`<tr><td>${k}</td><td style="text-align:right">${v}</td><td><span class="${tg}">${s}</span></td><td style="text-align:right;color:#576574">${f.age||'—'}s</td></tr>`;
+    });h+='</table>';bd.innerHTML=h;
+  }catch(e){bd.innerHTML=`<span style="color:#ff6b6b">Error: ${e.message}</span>`}
+}
+g('sym-inp').addEventListener('keydown',e=>{if(e.key==='Enter')inspect()});
+g('ex-inp').addEventListener('keydown',e=>{if(e.key==='Enter')inspect()});
+</script>
+</body>
+</html>

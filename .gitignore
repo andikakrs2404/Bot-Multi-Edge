@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+*.egg-info/
+
+# Build artifacts
+build/
+dist/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Next.js
+dashboard/node_modules/
+dashboard/.next/
+dashboard/out/
+
+# Graphify
+graphify-out/cache/
+graphify-out/curated_backup/
+
+# Hermes
+.hermes/
+*.hermes.db
+*.hermes.db-shm
+*.hermes.db-wal
