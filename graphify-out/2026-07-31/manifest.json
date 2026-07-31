@@ -455,8 +455,8 @@
     "semantic_hash": ""
   },
   "shared/akb.py": {
-    "mtime": 1785486350.0409698,
-    "ast_hash": "112054c80fd0f33ab10b44a60a3cafac",
+    "mtime": 1785492777.4243984,
+    "ast_hash": "5d455a201a4726f3c8fabd47276eb6f8",
     "semantic_hash": ""
   },
   "shared/binance.py": {
@@ -465,8 +465,8 @@
     "semantic_hash": ""
   },
   "shared/contracts.py": {
-    "mtime": 1785490660.3095927,
-    "ast_hash": "fb3ff0a3f258ff272b978f6ec0efcfce",
+    "mtime": 1785492768.076323,
+    "ast_hash": "093766f50e51504a71bf8ad0a6f194ae",
     "semantic_hash": ""
   },
   "shared/evidence.py": {
@@ -722,6 +722,21 @@
   "docs/specifications/validator-engine.md": {
     "mtime": 1785490394.3170109,
     "ast_hash": "0b6791e14c91791ac2dbff88322d66cc",
+    "semantic_hash": ""
+  },
+  "shared/activation.py": {
+    "mtime": 1785492812.0847948,
+    "ast_hash": "3e3916cfc160234bcb43ef5c3a77024e",
+    "semantic_hash": ""
+  },
+  "tests/test_activation.py": {
+    "mtime": 1785492749.09094,
+    "ast_hash": "a77390411dc2577c714b375b0aa96545",
+    "semantic_hash": ""
+  },
+  "docs/specifications/activation-engine.md": {
+    "mtime": 1785492473.949208,
+    "ast_hash": "2e8a104eea014d2b88d3e69fff7127aa",
     "semantic_hash": ""
   }
 }

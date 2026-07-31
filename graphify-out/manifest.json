@@ -495,8 +495,8 @@
     "semantic_hash": ""
   },
   "shared/registries.py": {
-    "mtime": 1785490629.4426918,
-    "ast_hash": "afdd796480cf9d1b1de9ca9ea9845031",
+    "mtime": 1785493440.2416234,
+    "ast_hash": "f430bbe08256131eebf592c1c377d4d0",
     "semantic_hash": ""
   },
   "shared/registry.py": {
@@ -737,6 +737,21 @@
   "docs/specifications/activation-engine.md": {
     "mtime": 1785492473.949208,
     "ast_hash": "2e8a104eea014d2b88d3e69fff7127aa",
+    "semantic_hash": ""
+  },
+  "shared/portfolio.py": {
+    "mtime": 1785493409.4107347,
+    "ast_hash": "5e2f3ec2924302ec8e36d87b049b88a7",
+    "semantic_hash": ""
+  },
+  "tests/test_portfolio.py": {
+    "mtime": 1785493371.3573709,
+    "ast_hash": "49f709a34023fa1bdc44554491d7b9b7",
+    "semantic_hash": ""
+  },
+  "docs/specifications/portfolio.md": {
+    "mtime": 1785493333.7189305,
+    "ast_hash": "66e7832bbb8c071bb34fdc36582114d7",
     "semantic_hash": ""
   }
 }

@@ -63,3 +63,21 @@ class EdgeRegistry(Registry[Edge]):
     def set_status(self, entry: RegistryEntry[Edge], status: EdgeStatus) -> RegistryEntry[Edge]:
         """Advance Edge lifecycle in place (Portfolio/monitoring stages use this)."""
         return self.replace_entry(entry, replace(entry.entity, status=status))
+
+
+class PortfolioRegistry(Registry):
+    """Portfolio registry — immutable ACTIVE-edge selections."""
+
+    kind = "portfolio"
+    identity_prefix = "PORT-"
+
+    def _identity_of(self, entity) -> str:
+        return entity.portfolio_id
+
+    def all_draft(self):
+        from .contracts import PortfolioStatus
+        return [e for e in super().all_active() if e.entity.status == PortfolioStatus.DRAFT]
+
+    def all_live(self):
+        from .contracts import PortfolioStatus
+        return [e for e in super().all_active() if e.entity.status == PortfolioStatus.LIVE]

@@ -97,7 +97,6 @@
   "95": "ADR-009: AKB Representation",
   "96": "Specification: Experiment Protocol",
   "97": "Specification: Feature Factory",
-  "98": "validate_manifest",
   "99": "ADR-000B: System Boundaries & Trust Model",
   "100": "ADR-003: Data Contract",
   "101": "ADR-004: Dataset Versioning",
@@ -113,13 +112,10 @@
   "111": "Specification: Experiment Protocol (Field-Level)",
   "112": "Specification: Raw & Snapshot Contracts",
   "113": "Specification: Domain Entities (Field-Level)",
-  "114": "main.cpp",
   "115": "glossary.md",
   "116": "__init__.py",
   "117": "FeatureStore",
   "118": "registry.py",
   "119": "Specification: Validator Engine",
-  "120": "Timestamps",
-  "121": "TestLabels",
-  "122": ".promote"
+  "120": "Timestamps"
 }
