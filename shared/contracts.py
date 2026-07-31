@@ -65,14 +65,16 @@ class PortfolioStatus(str, Enum):
 # ── Relationship types (ADR-002, first-class graph edges) ──
 
 class RelationshipType(str, Enum):
-    DERIVES = "derives"              # Feature -> Feature (lineage)
-    USES = "uses"                    # Rule -> Feature
+    DERIVES = "derives"              # legacy alias: Feature -> Feature
+    DERIVED_FROM = "derived_from"    # Feature/Label -> Dataset | Feature -> Feature
+    USES = "uses"                    # Rule -> Feature | Experiment -> Dataset/Rule
     TESTS = "tests"                  # Experiment -> Candidate
-    PRODUCES = "produces"            # Experiment -> Edge
-    SUPPORTED_BY = "supported_by"    # Edge -> Evidence
+    PRODUCES = "produces"            # Experiment -> Candidate/Evidence
+    SUPPORTED_BY = "supported_by"    # Edge -> Evidence (1:N)
     SUPERSEDES = "supersedes"        # Edge -> Edge
     ALLOCATED_TO = "allocated_to"    # Edge -> Portfolio
     DRIVES = "drives"                # Portfolio -> ProductionDecision
+    REFERENCES = "references"        # Evidence -> Candidate/Experiment
 
 
 # ── Domain entities (ADR-002) ──
@@ -126,10 +128,16 @@ class Experiment:
 
 @dataclass(frozen=True, slots=True)
 class Edge:
-    """Validated Candidate promoted to Knowledge (ADR-002/002A)."""
+    """Validated Candidate promoted to Knowledge (ADR-002/002A).
+
+    supported_by: 1:N EvidenceIDs (initial validation, walk-forward, OOS,
+    decay check, revalidation — each produces its own Evidence). The
+    edge is only as strong as its weakest supporting evidence chain.
+    """
     edge_id: str
     rule_id: str
     experiment_id: str
+    supported_by: tuple[str, ...] = ()  # EvidenceIDs (1:N)
     status: EdgeStatus = EdgeStatus.DISCOVERED
     version: int = 1
     birth_date: datetime = field(default_factory=utcnow)

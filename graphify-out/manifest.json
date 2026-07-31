@@ -190,8 +190,8 @@
     "semantic_hash": ""
   },
   "pyproject.toml": {
-    "mtime": 1785247647.1758592,
-    "ast_hash": "795ceb6ce2a2dd27184d21a2838136a1",
+    "mtime": 1785481203.396317,
+    "ast_hash": "4df659f745179d2c8ec65dda9221b6a3",
     "semantic_hash": ""
   },
   "services/__init__.py": {
@@ -435,18 +435,283 @@
     "semantic_hash": ""
   },
   "features/breadth.py": {
-    "mtime": 1785318644.1108582,
-    "ast_hash": "d6899bb852039b3ac57b952e1e820eb1",
+    "mtime": 1785324640.657801,
+    "ast_hash": "983114407ff3092a6e82ba1d9f37d65e",
     "semantic_hash": ""
   },
   "features/ranking.py": {
-    "mtime": 1785321942.6927218,
-    "ast_hash": "fe9832fb455fb87fa56716c02c224e10",
+    "mtime": 1785324650.240033,
+    "ast_hash": "a584124d813eb54f3ded4603c76f0a5e",
     "semantic_hash": ""
   },
   "tests/test_ranking.py": {
     "mtime": 1785322368.962612,
     "ast_hash": "4576757f9e38a60b93f4984307aa438d",
+    "semantic_hash": ""
+  },
+  "MDVR/esp32-rs485/src/main.cpp": {
+    "mtime": 1785482512.6088364,
+    "ast_hash": "a46c41fdf11eb3c4caf008153c8570c8",
+    "semantic_hash": ""
+  },
+  "shared/__init__.py": {
+    "mtime": 1785478566.188961,
+    "ast_hash": "69cc1f8909a396a33b2a36f36876e720",
+    "semantic_hash": ""
+  },
+  "shared/akb.py": {
+    "mtime": 1785486350.0409698,
+    "ast_hash": "112054c80fd0f33ab10b44a60a3cafac",
+    "semantic_hash": ""
+  },
+  "shared/binance.py": {
+    "mtime": 1785481664.9786649,
+    "ast_hash": "7cd89aa8e3fbd7391bdff26142b25c68",
+    "semantic_hash": ""
+  },
+  "shared/contracts.py": {
+    "mtime": 1785486334.5004327,
+    "ast_hash": "7ebf052ed22ad5967a678afe7f1fae7a",
+    "semantic_hash": ""
+  },
+  "shared/evidence.py": {
+    "mtime": 1785483733.8516164,
+    "ast_hash": "278e17e0b0fd07dae556f13910c37c70",
+    "semantic_hash": ""
+  },
+  "shared/experiment.py": {
+    "mtime": 1785483414.9268048,
+    "ast_hash": "6076be8b8b225164ce815a51565d4203",
+    "semantic_hash": ""
+  },
+  "shared/feature_factory.py": {
+    "mtime": 1785482477.2215202,
+    "ast_hash": "c8843c477ca70f65df5957c763cfa19e",
+    "semantic_hash": ""
+  },
+  "shared/features.py": {
+    "mtime": 1785482468.440236,
+    "ast_hash": "888bedf3bd6705c6568c1e9f06db6771",
+    "semantic_hash": ""
+  },
+  "shared/raw_data_engine.py": {
+    "mtime": 1785481512.8855886,
+    "ast_hash": "0b3cc8378e8a96742e4ca6d9abecda10",
+    "semantic_hash": ""
+  },
+  "shared/registries.py": {
+    "mtime": 1785478726.959654,
+    "ast_hash": "c9116e37e85ee8a8a2ba6026f520f334",
+    "semantic_hash": ""
+  },
+  "shared/registry.py": {
+    "mtime": 1785483771.5431287,
+    "ast_hash": "c895818536794138e62a372cdc30b519",
+    "semantic_hash": ""
+  },
+  "shared/rules.py": {
+    "mtime": 1785480579.6088362,
+    "ast_hash": "24e2fdf7bd196b97e8f076dc27336e9b",
+    "semantic_hash": ""
+  },
+  "shared/universe.py": {
+    "mtime": 1785481241.6721299,
+    "ast_hash": "b01fce041228241b7d5dcb96bfbaf943",
+    "semantic_hash": ""
+  },
+  "shared/validation.py": {
+    "mtime": 1785481590.5587523,
+    "ast_hash": "fd3cfc62ddbde7cb021c2dd2a5fd92eb",
+    "semantic_hash": ""
+  },
+  "tests/test_akb.py": {
+    "mtime": 1785486379.0884748,
+    "ast_hash": "359e52c75b2c69ad6b49f4c6b5dc2644",
+    "semantic_hash": ""
+  },
+  "tests/test_contracts.py": {
+    "mtime": 1785478551.6502676,
+    "ast_hash": "bf76f186f44cbeec10f8d13d9875b7a7",
+    "semantic_hash": ""
+  },
+  "tests/test_evidence.py": {
+    "mtime": 1785483785.2462988,
+    "ast_hash": "1f43349e793faeaad223ad51d02f477c",
+    "semantic_hash": ""
+  },
+  "tests/test_experiment.py": {
+    "mtime": 1785483469.096764,
+    "ast_hash": "982eea5a64f5a5214d51cc4496913cc6",
+    "semantic_hash": ""
+  },
+  "tests/test_feature_factory.py": {
+    "mtime": 1785482521.5430284,
+    "ast_hash": "19624521d3fac263196f1f2c26c5425d",
+    "semantic_hash": ""
+  },
+  "tests/test_raw_data_engine.py": {
+    "mtime": 1785481633.0783153,
+    "ast_hash": "ba9e855c65e8a5b38a9eac20eea19d52",
+    "semantic_hash": ""
+  },
+  "tests/test_registry.py": {
+    "mtime": 1785478741.6872375,
+    "ast_hash": "26d4d727a17fc6a6b0c62e1432062057",
+    "semantic_hash": ""
+  },
+  "tests/test_rules.py": {
+    "mtime": 1785480605.5165298,
+    "ast_hash": "6515dc9b767f45173a2abeab0aac121d",
+    "semantic_hash": ""
+  },
+  "tests/test_validation.py": {
+    "mtime": 1785480819.511362,
+    "ast_hash": "55df7ad28f0c163e5fb584b0e8ae36a8",
+    "semantic_hash": ""
+  },
+  "docs/CONSTITUTION.md": {
+    "mtime": 1785478505.2159793,
+    "ast_hash": "b093438a1acfb060f337ae5fad33bda0",
+    "semantic_hash": ""
+  },
+  "docs/adr/ADR-000-Vision-Philosophy-And-Invariants.md": {
+    "mtime": 1785478484.7583914,
+    "ast_hash": "086fca33f2fd0886c3a66f6b169dfb67",
+    "semantic_hash": ""
+  },
+  "docs/adr/ADR-000A-Ubiquitous-Language.md": {
+    "mtime": 1785478484.716591,
+    "ast_hash": "53e6b1a9c20397ad873efe6606cab852",
+    "semantic_hash": ""
+  },
+  "docs/adr/ADR-000B-System-Boundaries-And-Trust-Model.md": {
+    "mtime": 1785478484.7378683,
+    "ast_hash": "9d94a4f29aca35c10ca1d611e5340a8c",
+    "semantic_hash": ""
+  },
+  "docs/adr/ADR-001-Engineering-Principles.md": {
+    "mtime": 1785478484.8170073,
+    "ast_hash": "2cb134c90e40b9391e65ac6b24b8307b",
+    "semantic_hash": ""
+  },
+  "docs/adr/ADR-001A-Decision-Record-Protocol.md": {
+    "mtime": 1785478484.7770433,
+    "ast_hash": "509307ab161b73f3af3338bfd3750150",
+    "semantic_hash": ""
+  },
+  "docs/adr/ADR-001B-Architectural-Quality-Attributes.md": {
+    "mtime": 1785478484.7967365,
+    "ast_hash": "7aff74a4e2e8c5e070c792b036b8868c",
+    "semantic_hash": ""
+  },
+  "docs/adr/ADR-002-Domain-Ontology.md": {
+    "mtime": 1785478484.858092,
+    "ast_hash": "fb059bd0b5f62feb1469d2034bd8127f",
+    "semantic_hash": ""
+  },
+  "docs/adr/ADR-002A-Domain-Lifecycles.md": {
+    "mtime": 1785478484.8366575,
+    "ast_hash": "d63c02b6b0c1b3e75257161bb6f4791a",
+    "semantic_hash": ""
+  },
+  "docs/adr/ADR-003-Data-Contract.md": {
+    "mtime": 1785478484.8769565,
+    "ast_hash": "b9599bc224a00c4587791063720c3356",
+    "semantic_hash": ""
+  },
+  "docs/adr/ADR-004-Dataset-Versioning.md": {
+    "mtime": 1785478484.8962243,
+    "ast_hash": "a35f29061a54811bbf2183a600629637",
+    "semantic_hash": ""
+  },
+  "docs/adr/ADR-005-Registry-Model.md": {
+    "mtime": 1785478484.91695,
+    "ast_hash": "20c45ef59cfd04e91f2f8fa497362f5a",
+    "semantic_hash": ""
+  },
+  "docs/adr/ADR-006-Rule-Grammar.md": {
+    "mtime": 1785478484.9365475,
+    "ast_hash": "989b077859e09fdde315a68d808ee6b2",
+    "semantic_hash": ""
+  },
+  "docs/adr/ADR-007-Experiment-Protocol.md": {
+    "mtime": 1785478484.958079,
+    "ast_hash": "9f2a84437a9b5a2b4b8d7e925a718d1d",
+    "semantic_hash": ""
+  },
+  "docs/adr/ADR-008-Evidence-Model.md": {
+    "mtime": 1785478484.9785218,
+    "ast_hash": "1ca724dd5400f389423dc29bfb27776b",
+    "semantic_hash": ""
+  },
+  "docs/adr/ADR-009-AKB-Representation.md": {
+    "mtime": 1785478484.9969494,
+    "ast_hash": "6d35e82550743e6f7eb5a62631740da5",
+    "semantic_hash": ""
+  },
+  "docs/adr/README.md": {
+    "mtime": 1785474003.974588,
+    "ast_hash": "e841c835224f3b8fb8b93df251303331",
+    "semantic_hash": ""
+  },
+  "docs/glossary/glossary.md": {
+    "mtime": 1785474035.4550827,
+    "ast_hash": "8d91504068d57c711c71affc4d3ea6e1",
+    "semantic_hash": ""
+  },
+  "docs/specifications/akb-representation.md": {
+    "mtime": 1785486362.0138943,
+    "ast_hash": "3458da4404265849384aa5fae7185c2b",
+    "semantic_hash": ""
+  },
+  "docs/specifications/contracts/snapshot.md": {
+    "mtime": 1785474003.974588,
+    "ast_hash": "60f954f9cf4fbedaa2bac17c9c059733",
+    "semantic_hash": ""
+  },
+  "docs/specifications/domain/entities.md": {
+    "mtime": 1785474020.0763898,
+    "ast_hash": "d31d03c7ea4c70f6838748c65e741737",
+    "semantic_hash": ""
+  },
+  "docs/specifications/evidence-model.md": {
+    "mtime": 1785483701.4998274,
+    "ast_hash": "cd82b9df642da1c8341ded861db6439d",
+    "semantic_hash": ""
+  },
+  "docs/specifications/experiment-protocol.md": {
+    "mtime": 1785483150.125852,
+    "ast_hash": "aa5fe9fdb9381ab6acf4bc753d42fee7",
+    "semantic_hash": ""
+  },
+  "docs/specifications/feature-factory.md": {
+    "mtime": 1785482345.4734192,
+    "ast_hash": "104a70d117c0a03b5f67c1d929d2cfc8",
+    "semantic_hash": ""
+  },
+  "docs/specifications/protocols/experiment.md": {
+    "mtime": 1785474020.0529232,
+    "ast_hash": "f7f923102386852eeb2109695038b686",
+    "semantic_hash": ""
+  },
+  "docs/specifications/raw-data-engine.md": {
+    "mtime": 1785481220.9960399,
+    "ast_hash": "55c4049a4a2645c4d1aded61340b1bda",
+    "semantic_hash": ""
+  },
+  "docs/specifications/registry.md": {
+    "mtime": 1785478691.6966136,
+    "ast_hash": "d97758064715dd7db3ab03fa1f6be3ba",
+    "semantic_hash": ""
+  },
+  "docs/specifications/rules.md": {
+    "mtime": 1785480507.9373908,
+    "ast_hash": "cf05f43abfc514d0fbf8b03dc86f65c1",
+    "semantic_hash": ""
+  },
+  "docs/specifications/schemas/akb.md": {
+    "mtime": 1785474035.4550827,
+    "ast_hash": "2820378efa4ab305e3e1c6901f94c144",
     "semantic_hash": ""
   }
 }
