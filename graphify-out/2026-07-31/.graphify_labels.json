@@ -117,9 +117,5 @@
   "115": "glossary.md",
   "116": "__init__.py",
   "117": "FeatureStore",
-  "118": "registry.py",
-  "119": "Specification: Validator Engine",
-  "120": "Timestamps",
-  "121": "TestLabels",
-  "122": ".promote"
+  "118": "registry.py"
 }

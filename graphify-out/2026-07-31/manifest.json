@@ -449,6 +449,11 @@
     "ast_hash": "4576757f9e38a60b93f4984307aa438d",
     "semantic_hash": ""
   },
+  "MDVR/esp32-rs485/src/main.cpp": {
+    "mtime": 1785482512.6088364,
+    "ast_hash": "a46c41fdf11eb3c4caf008153c8570c8",
+    "semantic_hash": ""
+  },
   "shared/__init__.py": {
     "mtime": 1785478566.188961,
     "ast_hash": "69cc1f8909a396a33b2a36f36876e720",
@@ -465,8 +470,8 @@
     "semantic_hash": ""
   },
   "shared/contracts.py": {
-    "mtime": 1785490660.3095927,
-    "ast_hash": "fb3ff0a3f258ff272b978f6ec0efcfce",
+    "mtime": 1785486334.5004327,
+    "ast_hash": "7ebf052ed22ad5967a678afe7f1fae7a",
     "semantic_hash": ""
   },
   "shared/evidence.py": {
@@ -495,8 +500,8 @@
     "semantic_hash": ""
   },
   "shared/registries.py": {
-    "mtime": 1785490629.4426918,
-    "ast_hash": "afdd796480cf9d1b1de9ca9ea9845031",
+    "mtime": 1785478726.959654,
+    "ast_hash": "c9116e37e85ee8a8a2ba6026f520f334",
     "semantic_hash": ""
   },
   "shared/registry.py": {
@@ -707,21 +712,6 @@
   "docs/specifications/schemas/akb.md": {
     "mtime": 1785474035.4550827,
     "ast_hash": "2820378efa4ab305e3e1c6901f94c144",
-    "semantic_hash": ""
-  },
-  "shared/validator.py": {
-    "mtime": 1785490702.6300306,
-    "ast_hash": "a995ff3a71abc6b628283f645c184f45",
-    "semantic_hash": ""
-  },
-  "tests/test_validator.py": {
-    "mtime": 1785490714.6310666,
-    "ast_hash": "c737f7d45de9a615311ac4a5d3a2f6d1",
-    "semantic_hash": ""
-  },
-  "docs/specifications/validator-engine.md": {
-    "mtime": 1785490394.3170109,
-    "ast_hash": "0b6791e14c91791ac2dbff88322d66cc",
     "semantic_hash": ""
   }
 }

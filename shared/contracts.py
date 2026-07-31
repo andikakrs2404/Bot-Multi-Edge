@@ -138,6 +138,7 @@ class Edge:
     rule_id: str
     experiment_id: str
     supported_by: tuple[str, ...] = ()  # EvidenceIDs (1:N)
+    policy_id: str = ""               # ValidationPolicy that promoted it
     status: EdgeStatus = EdgeStatus.DISCOVERED
     version: int = 1
     birth_date: datetime = field(default_factory=utcnow)

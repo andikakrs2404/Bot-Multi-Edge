@@ -1,16 +1,16 @@
 # Graph Report - future-trading-bot-rnd  (2026-07-31)
 
 ## Corpus Check
-- 144 files · ~69,670 words
+- 142 files · ~68,638 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1972 nodes · 3862 edges · 123 communities (108 shown, 15 thin omitted)
-- Extraction: 81% EXTRACTED · 19% INFERRED · 0% AMBIGUOUS · INFERRED: 729 edges (avg confidence: 0.53)
+- 1926 nodes · 3654 edges · 119 communities (102 shown, 17 thin omitted)
+- Extraction: 81% EXTRACTED · 19% INFERRED · 0% AMBIGUOUS · INFERRED: 678 edges (avg confidence: 0.53)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `5f2dd084`
+- Built from commit: `ccb17e1d`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -125,31 +125,27 @@
 - __init__.py
 - FeatureStore
 - registry.py
-- Specification: Validator Engine
-- Timestamps
-- TestLabels
-- .promote
 
 ## God Nodes (most connected - your core abstractions)
 1. `MarketEvent` - 64 edges
 2. `Exchange` - 56 edges
-3. `Edge` - 55 edges
-4. `AKB` - 50 edges
-5. `EventBus` - 46 edges
-6. `Dataset` - 45 edges
-7. `FeatureId` - 44 edges
-8. `Rule` - 43 edges
-9. `Registry` - 43 edges
-10. `Feature` - 39 edges
+3. `Edge` - 47 edges
+4. `EventBus` - 46 edges
+5. `Dataset` - 45 edges
+6. `FeatureId` - 44 edges
+7. `Rule` - 43 edges
+8. `Registry` - 43 edges
+9. `Feature` - 39 edges
+10. `AKB` - 37 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `BreadthEngine` --uses--> `EventBus`  [INFERRED]
   features/breadth.py → market_data/event_bus.py
+- `FeatureHandler` --uses--> `EventBus`  [INFERRED]
+  features/feature_store.py → market_data/event_bus.py
 - `FeatureHandler` --uses--> `EventType`  [INFERRED]
   features/feature_store.py → market_data/events.py
 - `FeatureHandler` --uses--> `Exchange`  [INFERRED]
-  features/feature_store.py → market_data/events.py
-- `FeatureHandler` --uses--> `MarketEvent`  [INFERRED]
   features/feature_store.py → market_data/events.py
 - `FeatureStore` --uses--> `EventBus`  [INFERRED]
   features/feature_store.py → market_data/event_bus.py
@@ -157,15 +153,15 @@
 ## Import Cycles
 - None detected.
 
-## Communities (123 total, 15 thin omitted)
+## Communities (119 total, 17 thin omitted)
 
 ### Community 0 - "MarketEvent"
-Cohesion: 0.12
-Nodes (32): CandleHandler, _feature(), FeatureHandler, FundingHandler, LiquidationHandler, OpenInterestHandler, Protocol, Feature handlers — one per event type, one handler_id per handler.  Each handler (+24 more)
+Cohesion: 0.16
+Nodes (26): CandleHandler, _feature(), FeatureHandler, FundingHandler, LiquidationHandler, OpenInterestHandler, Protocol, Feature handlers — one per event type, one handler_id per handler.  Each handler (+18 more)
 
 ### Community 1 - "ObservabilityStore"
-Cohesion: 0.08
-Nodes (27): BaseModel, deque, FastAPI, Observability API — FastAPI app with CORS.  Wires up pipeline EventBus, SymbolRe, ExchangeStatus, Pydantic response models for observability API., SymbolListResponse, SymbolResponse (+19 more)
+Cohesion: 0.06
+Nodes (30): BaseModel, deque, FastAPI, _lifespan(), Observability API — FastAPI app with CORS.  Wires up pipeline EventBus, SymbolRe, ExchangeStatus, Pydantic response models for observability API., SymbolListResponse (+22 more)
 
 ### Community 2 - "devDependencies"
 Cohesion: 0.05
@@ -188,8 +184,8 @@ Cohesion: 0.07
 Nodes (27): ADR-011: Opportunity Pipeline, Architecture, Components, Config, Consequences, Context, Cooldown Tracker, Decision (+19 more)
 
 ### Community 7 - "Exchange"
-Cohesion: 0.13
-Nodes (10): DefaultWindowManager, Default implementation of WindowManager.      Manages data windows for each symb, Verify SymbolWindowState is a dataclass with slots (no instance dict)., Verify DefaultWindowManager can be instantiated., Verify data is appended to the correct deques., Verify deques respect their maxlen., Verify state is isolated between different symbols., Verify all necessary components can be imported. (+2 more)
+Cohesion: 0.09
+Nodes (17): FeatureHandler, Protocol, DefaultWindowManager, Protocol, Manages time-based data windows for various market data types     on a per-symbo, Default implementation of WindowManager.      Manages data windows for each symb, WindowManager, MarketEvent (+9 more)
 
 ### Community 8 - "compilerOptions"
 Cohesion: 0.07
@@ -212,8 +208,8 @@ Cohesion: 0.08
 Nodes (24): ADR-003: Screener Architecture, Attention Allocation Policy, Consequences, Context, Decision, Demotion (to lower tier), Non-Goals (V1), Promotion / Demotion Policy (+16 more)
 
 ### Community 13 - "ConnectionStatus"
-Cohesion: 0.14
-Nodes (11): ABC, ExchangeConnection, Any, Exchange connection — base class for WS connections with reconnect.  Emits Conne, Base class for exchange WebSocket connections.      Subclasses define _connect_a, ConnectionStatus, datetime, Exchange connection state change. (+3 more)
+Cohesion: 0.10
+Nodes (12): ABC, ExchangeConnection, Any, Base class for exchange WebSocket connections.      Subclasses define _connect_a, ConnectionStatus, datetime, Exchange connection state change., MockExchangeConnection (+4 more)
 
 ### Community 14 - "ADR-010: Edge Engine Framework"
 Cohesion: 0.08
@@ -228,8 +224,8 @@ Cohesion: 0.09
 Nodes (22): ADR-008: Tier Assignment, Capacity Enforcement, Capacity rationale, Config, Consequences, Consumer Map, Context, Decision (+14 more)
 
 ### Community 17 - "EventBus"
-Cohesion: 0.05
-Nodes (51): KeyError, Logical AST expression over Features (ADR-006)., Rule, _build_context(), Candidate, candidate_id(), CandidateStatus, Evidence (+43 more)
+Cohesion: 0.13
+Nodes (27): _build_context(), Candidate, candidate_id(), CandidateStatus, _eval_row(), Evidence, evidence_id(), Experiment (+19 more)
 
 ### Community 18 - "SPEC-Research-Lifecycle"
 Cohesion: 0.10
@@ -260,12 +256,12 @@ Cohesion: 0.11
 Nodes (17): Adapter Responsibilities, ADR-002: Market Data Layer, Architecture, Connection Strategy, Consequences, Context, Decision, Design Answers (+9 more)
 
 ### Community 25 - "Event"
-Cohesion: 0.21
-Nodes (13): build_subscribe(), _extract_payload(), parse_message(), _parse_ts(), Any, datetime, Bybit Futures WS message adapter — parses V5 public linear streams.  Produces Ma, Convert ms timestamp to UTC datetime. (+5 more)
+Cohesion: 0.23
+Nodes (11): build_subscribe(), _extract_payload(), parse_message(), _parse_ts(), Any, datetime, Bybit Futures WS message adapter — parses V5 public linear streams.  Produces Ma, Convert ms timestamp to UTC datetime. (+3 more)
 
 ### Community 26 - "__init__.py"
-Cohesion: 0.10
-Nodes (23): MarketBreadth, NormalizedFeature, RankedSymbol, One normalised feature value for one symbol., Snapshot of market-wide conditions., Final ranking output for one symbol., NormalizationEngine, Return a snapshot of the entire normalized feature state. (+15 more)
+Cohesion: 0.15
+Nodes (9): RankedSymbol, Final ranking output for one symbol., RankingEngine, RankingStore, In-memory store for ranked symbols., MockBus, MockNorm, Unit tests for ADR-007 Ranking Engine. (+1 more)
 
 ### Community 27 - "ADR-004: Feature Store"
 Cohesion: 0.12
@@ -296,8 +292,8 @@ Cohesion: 0.14
 Nodes (13): Adding a New Edge, E001 — OI Breakout, E002 — Funding Reversal, E003 — Volume Momentum, E004 — Compression Breakout, E005 — Leader Follower, Edge Details, Edge Families (+5 more)
 
 ### Community 34 - "binance.py"
-Cohesion: 0.14
-Nodes (11): Exchange, _infer_sector(), Any, Symbol Registry — auto-discover, track lifecycle, serve metadata.  Polls exchang, Strip quote suffix + numeric prefix, then match keywords., Auto-discovers symbols from exchange REST APIs.      - Polls every interval_sec, SymbolMeta, SymbolRegistry (+3 more)
+Cohesion: 0.11
+Nodes (20): FeatureStore — authoritative state owner per ADR-004.  Ingest → route → handler, Deprecated: use get_symbol_state(). Accepts str exchange for backward compat., Implements the data windowing logic as per ADR-004., Exchange connection — base class for WS connections with reconnect.  Emits Conne, Priority event bus — pub/sub with ordered delivery per symbol., EventType, Exchange, Enum (+12 more)
 
 ### Community 35 - "AGENT GUIDELINES"
 Cohesion: 0.15
@@ -305,11 +301,11 @@ Nodes (12): AGENT GUIDELINES, Common Queries, Domain-Specific Extensions, Forbid
 
 ### Community 36 - "EventType"
 Cohesion: 0.12
-Nodes (15): Reject decisions that cannot trace to at least one ACTIVE Edge., register_production_decision(), Edge, Portfolio, ProductionDecision, Validated Candidate promoted to Knowledge (ADR-002/002A).      supported_by: 1:N, Curated allocation over ACTIVE edges (ADR-002)., Auditable production action (ADR-002). (+7 more)
+Nodes (16): KeyError, Path, ValueError, Register a new entry. Fails on duplicate ACTIVE identity., Mark ACTIVE entry SUPERSEDED, pointing to successor (spec §5)., Move ACTIVE entry to ARCHIVED (retired, not superseded)., Replace the ACTIVE entry's entity/status in place (same identity).          Used, Return list of violations; empty list = valid. (+8 more)
 
 ### Community 37 - "TestSequenceValidator"
-Cohesion: 0.19
-Nodes (5): TestSequenceValidator, Sequence Validator — detect gaps, duplicates, out-of-order per symbol.  Uses Exc, Per-exchange, per-symbol sequence tracking.      Detects:     - Missing sequence, Check sequence anomaly. Returns anomaly type or None., SequenceValidator
+Cohesion: 0.23
+Nodes (4): TestSequenceValidator, Per-exchange, per-symbol sequence tracking.      Detects:     - Missing sequence, Check sequence anomaly. Returns anomaly type or None., SequenceValidator
 
 ### Community 38 - "ADR-001: System Overview"
 Cohesion: 0.18
@@ -324,8 +320,8 @@ Cohesion: 0.18
 Nodes (10): Alpha Source Resolution, Attribution Chain, Field Definitions, Non-Goals (V1), PnL Analysis Queries, Purpose, References, Signal Output Schema (+2 more)
 
 ### Community 41 - "Timestamps"
-Cohesion: 0.14
-Nodes (12): PerSymbolOrderedBus, PrioritizedEvent, Priority event bus — pub/sub with ordered delivery per symbol., Wraps EventBus with per-symbol ordering guarantee., Enqueue a normalised event for delivery., Event, Enum, Event schemas — Phase 1 contract (frozen).  Hierarchy:   Event (base, all events (+4 more)
+Cohesion: 0.13
+Nodes (15): PerSymbolOrderedBus, PrioritizedEvent, Wraps EventBus with per-symbol ordering guarantee., Enqueue a normalised event for delivery., Event, Triple-timestamp envelope per ADR-002 and ADR-004., Base event — every system event carries these., Timestamps (+7 more)
 
 ### Community 42 - "page.tsx"
 Cohesion: 0.36
@@ -356,52 +352,48 @@ Cohesion: 0.50
 Nodes (3): Cara Pakai, DECISION-LOG, Log
 
 ### Community 71 - "PerSymbolOrderedBus"
-Cohesion: 0.10
-Nodes (9): FeatureHandler, Protocol, Handler, EventBus, Async priority-based pub/sub bus.      - High-priority events (trade, liquidatio, Register a handler. events/symbols set = filter; None = all., Start the delivery loop., MockExchangeConnection (+1 more)
+Cohesion: 0.15
+Nodes (5): Handler, EventBus, Async priority-based pub/sub bus.      - High-priority events (trade, liquidatio, Register a handler. events/symbols set = filter; None = all., Start the delivery loop.
 
 ### Community 72 - "Edge"
-Cohesion: 0.14
-Nodes (16): evidence_id(), EvidenceRegistry, Deterministic EVID-ID (spec §2)., Evidence registry (ADR-005 kernel, spec §4)., Advance evidence lifecycle (spec §3): GENERATED → REVIEWED → SUPPORTS|REFUTES., review(), Enum, str (+8 more)
+Cohesion: 0.05
+Nodes (61): AKB, _dedupe_nodes(), GraphNode, GraphRelationship, link_edge_evidence(), link_evidence_trace(), NodeType, Any (+53 more)
 
 ### Community 73 - "rules.py"
-Cohesion: 0.09
-Nodes (33): FeatureContext, _eval_row(), _pct_from_z(), Standard normal CDF → percentile 0..100 (approx)., And, canonical_text(), canonicalize(), _compare() (+25 more)
+Cohesion: 0.10
+Nodes (29): FeatureContext, And, canonical_text(), canonicalize(), _compare(), Comparison, evaluate(), Expr (+21 more)
 
 ### Community 74 - "api.py"
 Cohesion: 0.12
 Nodes (15): bind_normalization(), bind_store(), feature_status(), handler_activity(), normalized_status(), normalized_symbol(), Observability — FeatureStore health + per-symbol feature dump.  Mounted as sub-r, High-level system health snapshot. (+7 more)
 
 ### Community 75 - "contracts.py"
-Cohesion: 0.13
-Nodes (30): assert_trust(), content_hash(), DatasetStatus, EdgeStatus, Evidence, Experiment, ExperimentStatus, make_dataset_id() (+22 more)
-
-### Community 76 - "Event"
-Cohesion: 0.26
-Nodes (13): Evidence, EdgeRegistry, Edge registry — living entities with lifecycle., Promote SUPPORTS Evidence into VALIDATED Edge., ValidationPolicy, ValidatorEngine, build_akb(), make_evidence() (+5 more)
+Cohesion: 0.09
+Nodes (34): assert_trust(), content_hash(), Dataset, DatasetStatus, Evidence, Experiment, ExperimentStatus, make_dataset_id() (+26 more)
 
 ### Community 77 - "feature_factory.py"
-Cohesion: 0.11
-Nodes (20): label_series_flat(), AlphaOS Feature Factory (ADR-000B/002/003/005, spec feature-factory).  Dataset (, Compute a flat label series from OHLCV (research)., atr_percent(), compute_feature(), compute_label(), ema(), pct_change() (+12 more)
+Cohesion: 0.07
+Nodes (35): Feature, Immutable derived property of market state (ADR-005)., FeatureFactory, FeatureFactoryError, label_series_flat(), RuntimeError, Compute a flat label series from OHLCV (research)., Builds FeatureSnapshots (trust level 2) from registered datasets. (+27 more)
 
 ### Community 78 - "raw_data_engine.py"
-Cohesion: 0.10
-Nodes (36): fetch_24h_volume_map(), fetch_funding(), fetch_klines(), fetch_open_interest(), FetchError, FetchStats, _get_json(), RuntimeError (+28 more)
+Cohesion: 0.08
+Nodes (50): fetch_24h_volume_map(), fetch_funding(), fetch_klines(), fetch_open_interest(), FetchError, FetchStats, _get_json(), RuntimeError (+42 more)
 
 ### Community 79 - "Dataset"
 Cohesion: 0.18
-Nodes (13): Feature, Immutable derived property of market state (ADR-005)., FeatureFactory, FeatureFactoryError, RuntimeError, Builds FeatureSnapshots (trust level 2) from registered datasets., Build a FeatureSnapshot from a registered dataset. Returns snapshot_id., make_registry() (+5 more)
+Nodes (11): Snapshot of store health., FeatureUpdateEvent, NormalizedFeature, Notification of a raw feature state change., One normalised feature value for one symbol., NormalizationEngine, Return a snapshot of the entire normalized feature state., Subscribes to FeatureUpdateEvent, cross-normalises, stores, notifies. (+3 more)
 
 ### Community 80 - "validation.py"
-Cohesion: 0.11
-Nodes (20): assert_valid(), content_hash_of(), ContractViolation, ValueError, AlphaOS Data Contract validation (ADR-003).  Validators for Raw Observations (tr, Raise ContractViolation unless result.ok., A data artifact violates its contract., Validate one raw observation row (trust level 0). (+12 more)
+Cohesion: 0.09
+Nodes (28): Path, Re-verify a dataset artifact (spec §9): manifest + id + content hash., verify_dataset(), Deterministic universe id = SHA256(canonical definition)., assert_valid(), check_dataset_id(), content_hash_of(), ContractViolation (+20 more)
 
 ### Community 81 - "Feature"
-Cohesion: 0.12
-Nodes (16): DatasetRegistry, FeatureRegistry, Concrete AlphaOS registries (ADR-005, spec §8).  FeatureRegistry (kind feature|l, Feature + Label registry (same kernel, kind discriminator)., Dataset registry — identity is the content hash., DuplicateActiveError, AlphaOS Registry Kernel (ADR-005).  Source of truth for domain entity definition, Registering a second ACTIVE entry for an already-ACTIVE identity. (+8 more)
+Cohesion: 0.14
+Nodes (14): Edge, Validated Candidate promoted to Knowledge (ADR-002/002A).      supported_by: 1:N, EdgeRegistry, FeatureRegistry, Feature + Label registry (same kernel, kind discriminator)., Edge registry — living entities with lifecycle., make_dataset(), make_edge() (+6 more)
 
 ### Community 82 - "UniverseDefinition"
-Cohesion: 0.12
-Nodes (18): BreadthEngine, ADR-006 Breadth Engine.  Computes market-wide breadth indicators from normalized, FeatureStore — authoritative state owner per ADR-004.  Ingest → route → handler, FeatureUpdateEvent, NormalizedFeatureUpdateEvent, Data models for the feature pipeline (ADR-004, ADR-005, ADR-006).  Events, raw/n, Notification of a raw feature state change., Notification of a normalized feature state change. (+10 more)
+Cohesion: 0.17
+Nodes (13): BreadthEngine, ADR-006 Breadth Engine.  Computes market-wide breadth indicators from normalized, MarketBreadth, NormalizedFeatureUpdateEvent, Data models for the feature pipeline (ADR-004, ADR-005, ADR-006).  Events, raw/n, Notification of a normalized feature state change., Snapshot of market-wide conditions., _average_rank() (+5 more)
 
 ### Community 83 - "Specification: AKB Representation"
 Cohesion: 0.14
@@ -464,8 +456,8 @@ Cohesion: 0.18
 Nodes (10): 1. Trust Level, 2. Inputs, 3. Outputs, 4. Feature Computation, 5. Labels (research datasets only), 6. Snapshot Manifest, 7. Registration, 8. Acceptance Criteria (+2 more)
 
 ### Community 98 - "validate_manifest"
-Cohesion: 0.16
-Nodes (12): AKB, _dedupe_nodes(), GraphNode, Any, Given EvidenceID → Candidate and Experiment., Given EdgeID → Dataset(s) via Evidence → Experiment → Dataset., Given RuleID → Experiments using it., ProductionDecision → Portfolio → Edge → Evidence → Experiment → Dataset. (+4 more)
+Cohesion: 0.24
+Nodes (7): ExperimentRunner, Evaluate rules against a research snapshot; emit candidates+evidence., Rule registry — identity is the content-addressed RuleID., RuleRegistry, make_snapshot(), Research snapshot: one feature + label_HIT_TARGET.      RSI constructed so rule, TestRunner
 
 ### Community 99 - "ADR-000B: System Boundaries & Trust Model"
 Cohesion: 0.20
@@ -496,8 +488,8 @@ Cohesion: 0.22
 Nodes (8): 1. Representation, 2. Node Types, 3. Canonical Form, 4. Identity, 5. Evaluation, 6. Registration Requirement, Canonical Text Format, Specification: Rule Grammar (AST)
 
 ### Community 106 - "TestLabels"
-Cohesion: 0.16
-Nodes (17): GraphRelationship, link_edge_evidence(), link_evidence_trace(), NodeType, Enum, Evidence, str, AlphaOS AKB Representation (ADR-009).  AKB = knowledge graph contract. Storage i (+9 more)
+Cohesion: 0.18
+Nodes (6): T7.5: Verify RankingStore only stores top N symbols., T7.1: Verify base score formula., T7.2: Verify breadth multiplier correctly adjusts score., T7.3: Verify RankingStore sorts symbols correctly., T7.4: Verify symbols with incomplete features are not ranked., TestRankingEngine
 
 ### Community 107 - "ADR-000A: Ubiquitous Language"
 Cohesion: 0.29
@@ -527,53 +519,33 @@ Nodes (5): FeatureSnapshot Contract (Trust Level 2), Manifest (per Dataset), Raw
 Cohesion: 0.33
 Nodes (5): EdgeRecord, Lifecycle Transition Log, PortfolioRecord, ProductionDecisionRecord, Specification: Domain Entities (Field-Level)
 
-### Community 114 - "main.cpp"
-Cohesion: 0.13
-Nodes (16): Dataset, datetime, Immutable, versioned collection of market data (ADR-002, ADR-004)., utcnow(), DatasetResult, AlphaOS Raw Data Engine (ADR-000B/003/004/005).  Produces ONLY Trust Level 0-1 a, Full pipeline for one dataset type over one universe (spec §3)., _to_ms() (+8 more)
-
 ### Community 117 - "FeatureStore"
-Cohesion: 0.15
-Nodes (5): FeatureStore, Return fresh RawFeature or None if stale / missing., Deprecated: use get_symbol_state(). Accepts str exchange for backward compat., Snapshot of store health., Authoritative state owner. Ingest, route, compute, store, notify.
+Cohesion: 0.27
+Nodes (3): FeatureStore, Return fresh RawFeature or None if stale / missing., Authoritative state owner. Ingest, route, compute, store, notify.
 
 ### Community 118 - "registry.py"
-Cohesion: 0.20
-Nodes (7): Path, Re-verify a dataset artifact (spec §9): manifest + id + content hash., Orchestrator: download → validate → artifacts → register (spec §3,§8)., RawDataEngine, verify_dataset(), fake_engine(), TestEnginePipeline
-
-### Community 119 - "Specification: Validator Engine"
-Cohesion: 0.20
-Nodes (9): 1. Purpose, 2. Input Contract, 3. ValidationPolicy, 4. Edge Creation, 5. Edge Lifecycle, 6. Registry, 7. AKB Integration, 8. Acceptance Criteria (+1 more)
-
-### Community 120 - "Timestamps"
-Cohesion: 0.33
-Nodes (8): Triple-timestamp envelope per ADR-002 and ADR-004., Timestamps, enrich_timestamps(), _ensure_dt(), datetime, Timestamp enrichment helpers — attach exchange_ts, received_ts, processed_ts.  U, Set event.timestamps.      - If event already has timestamps, update exchange_ts, Normalise float timestamp to UTC datetime.
-
-### Community 121 - "TestLabels"
-Cohesion: 0.36
-Nodes (3): label_series(), Single label series (flat)., TestLabels
-
-### Community 122 - ".promote"
-Cohesion: 0.32
-Nodes (4): edge_id(), Evidence, Deterministic EdgeID from RuleID + sorted EvidenceIDs., Validate Evidence list and register Edge(VALIDATED).
+Cohesion: 0.47
+Nodes (5): FeatureDefinition, get_feature(), list_features(), Feature identity — enum + definitions + registry.  This module is the single sou, Immutable definition of one feature in the pipeline.
 
 ## Knowledge Gaps
-- **712 isolated node(s):** `inter`, `metadata`, `SymbolDetail`, `ExchangeStatus`, `SystemStatus` (+707 more)
+- **704 isolated node(s):** `inter`, `metadata`, `SymbolDetail`, `ExchangeStatus`, `SystemStatus` (+699 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **15 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **17 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `TestRankingEngine` connect `__init__.py` to `EventBus`, `binance.py`?**
-  _High betweenness centrality (0.041) - this node is a cross-community bridge._
-- **Why does `Registry` connect `EventBus` to `Edge`, `TestLabels`, `Event`, `feature_factory.py`, `raw_data_engine.py`, `Dataset`, `Feature`, `main.cpp`, `registry.py`?**
-  _High betweenness centrality (0.040) - this node is a cross-community bridge._
-- **Why does `Exchange` connect `binance.py` to `MarketEvent`, `TestSequenceValidator`, `PerSymbolOrderedBus`, `Exchange`, `Timestamps`, `api.py`, `ConnectionStatus`, `UniverseDefinition`, `FeatureStore`, `validate_raw_observation`, `Event`, `__init__.py`?**
-  _High betweenness centrality (0.040) - this node is a cross-community bridge._
+- **Why does `Registry` connect `EventType` to `validate_manifest`, `Edge`, `contracts.py`, `feature_factory.py`, `raw_data_engine.py`, `EventBus`, `Feature`?**
+  _High betweenness centrality (0.035) - this node is a cross-community bridge._
+- **Why does `Exchange` connect `binance.py` to `MarketEvent`, `TestSequenceValidator`, `Exchange`, `Timestamps`, `api.py`, `TestLabels`, `ConnectionStatus`, `Dataset`, `UniverseDefinition`, `FeatureStore`, `validate_raw_observation`, `Event`, `__init__.py`?**
+  _High betweenness centrality (0.033) - this node is a cross-community bridge._
+- **Why does `TestRankingEngine` connect `TestLabels` to `__init__.py`, `binance.py`, `UniverseDefinition`, `Dataset`?**
+  _High betweenness centrality (0.032) - this node is a cross-community bridge._
 - **Are the 27 inferred relationships involving `MarketEvent` (e.g. with `FeatureHandler` and `FeatureStore`) actually correct?**
   _`MarketEvent` has 27 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 20 inferred relationships involving `Exchange` (e.g. with `FeatureHandler` and `FeatureStore`) actually correct?**
   _`Exchange` has 20 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 32 inferred relationships involving `Edge` (e.g. with `AKB` and `.validate_active_edge()`) actually correct?**
-  _`Edge` has 32 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 16 inferred relationships involving `AKB` (e.g. with `Edge` and `EdgeStatus`) actually correct?**
-  _`AKB` has 16 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 30 inferred relationships involving `Edge` (e.g. with `AKB` and `.validate_active_edge()`) actually correct?**
+  _`Edge` has 30 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 20 inferred relationships involving `EventBus` (e.g. with `BreadthEngine` and `FeatureHandler`) actually correct?**
+  _`EventBus` has 20 INFERRED edges - model-reasoned connections that need verification._

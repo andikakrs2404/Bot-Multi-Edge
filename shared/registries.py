@@ -6,8 +6,10 @@ EdgeRegistry — all built on the generic Registry kernel.
 
 from __future__ import annotations
 
-from .contracts import Dataset, Edge, Feature, Rule
-from .registry import Registry
+from dataclasses import replace
+
+from .contracts import Dataset, Edge, EdgeStatus, Feature, Rule
+from .registry import Registry, RegistryEntry
 
 
 class FeatureRegistry(Registry[Feature]):
@@ -48,3 +50,16 @@ class EdgeRegistry(Registry[Edge]):
 
     def _identity_of(self, entity: Edge) -> str:
         return entity.edge_id
+
+    def all_validated(self) -> list[RegistryEntry[Edge]]:
+        return [e for e in super().all_active() if e.entity.status == EdgeStatus.VALIDATED]
+
+    def all_active(self) -> list[RegistryEntry[Edge]]:
+        return [e for e in super().all_active() if e.entity.status == EdgeStatus.ACTIVE]
+
+    def all_decayed(self) -> list[RegistryEntry[Edge]]:
+        return [e for e in super().all_active() if e.entity.status == EdgeStatus.DECAYED]
+
+    def set_status(self, entry: RegistryEntry[Edge], status: EdgeStatus) -> RegistryEntry[Edge]:
+        """Advance Edge lifecycle in place (Portfolio/monitoring stages use this)."""
+        return self.replace_entry(entry, replace(entry.entity, status=status))
