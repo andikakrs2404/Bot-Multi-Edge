@@ -26,6 +26,7 @@ class NodeType(str, Enum):
     EDGE = "Edge"
     PORTFOLIO = "Portfolio"
     PRODUCTION_DECISION = "ProductionDecision"
+    ACTIVATION_RECORD = "ActivationRecord"
 
 
 @dataclass(frozen=True, slots=True)

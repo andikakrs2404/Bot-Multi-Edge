@@ -75,6 +75,8 @@ class RelationshipType(str, Enum):
     ALLOCATED_TO = "allocated_to"    # Edge -> Portfolio
     DRIVES = "drives"                # Portfolio -> ProductionDecision
     REFERENCES = "references"        # Evidence -> Candidate/Experiment
+    ACTIVATED_BY = "activated_by"    # Edge -> ActivationRecord
+    DECAYED_BY = "decayed_by"        # Edge -> ActivationRecord
 
 
 # ── Domain entities (ADR-002) ──
