@@ -1,7 +1,7 @@
 # ADR-006: Rule Grammar (AST)
 
 - **Layer:** 1 (Domain & Contracts)
-- **Status:** Draft
+- **Status:** Ratified
 - **Date:** 2026-07-29
 - **Depends On:** ADR-005
 

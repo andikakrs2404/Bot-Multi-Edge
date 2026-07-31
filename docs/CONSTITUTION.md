@@ -1,6 +1,8 @@
 # AlphaOS Constitutional Package
 
-**Version:** 1.0 (Draft — pending review & ratification)
+**Version:** 1.0
+
+**Status:** ✅ **RATIFIED** (Constitutional Freeze declared)
 
 **Date:** 2026-07-29
 
@@ -14,58 +16,62 @@ This file is the single official reference to the AlphaOS constitution. Layer 0 
 
 | ID | Title | Status |
 | --- | --- | --- |
-| ADR-000 | Vision, Philosophy, and Invariants | Draft |
-| ADR-000A | Ubiquitous Language | Draft |
-| ADR-000B | System Boundaries & Trust Model | Draft |
-| ADR-001 | Engineering Principles | Draft |
-| ADR-001A | Decision Record Protocol | Draft |
-| ADR-001B | Architectural Quality Attributes | Draft |
+| ADR-000 | Vision, Philosophy, and Invariants | ✅ Ratified |
+| ADR-000A | Ubiquitous Language | ✅ Ratified |
+| ADR-000B | System Boundaries & Trust Model | ✅ Ratified |
+| ADR-001 | Engineering Principles | ✅ Ratified |
+| ADR-001A | Decision Record Protocol | ✅ Ratified |
+| ADR-001B | Architectural Quality Attributes | ✅ Ratified |
 
 ### Layer 1 — Domain & Contracts
 
 | ID | Title | Status |
 | --- | --- | --- |
-| ADR-002 | Domain Ontology | Draft |
-| ADR-002A | Domain Lifecycles | Draft |
-| ADR-003 | Data Contract | Draft |
-| ADR-004 | Dataset Versioning | Draft |
-| ADR-005 | Registry Model (Feature & Label) | Draft |
-| ADR-006 | Rule Grammar (AST) | Draft |
-| ADR-007 | Experiment Protocol | Draft |
-| ADR-008 | Evidence Model | Draft |
-| ADR-009 | AKB Representation | Draft |
+| ADR-002 | Domain Ontology | ✅ Ratified |
+| ADR-002A | Domain Lifecycles | ✅ Ratified |
+| ADR-003 | Data Contract | ✅ Ratified |
+| ADR-004 | Dataset Versioning | ✅ Ratified |
+| ADR-005 | Registry Model (Feature & Label) | ✅ Ratified |
+| ADR-006 | Rule Grammar (AST) | ✅ Ratified |
+| ADR-007 | Experiment Protocol | ✅ Ratified |
+| ADR-008 | Evidence Model | ✅ Ratified |
+| ADR-009 | AKB Representation | ✅ Ratified |
 
-## Architectural Hash
-
-Computed at ratification time as:
+## Architectural Hash (FINAL)
 
 ```text
-SHA256( concatenation of all ratified ADR files, sorted by ID )
+be37bf97508691f93557849e1b05d7a1bf2c7be89029cc7f9dcbc77ba964d8cd
 ```
 
-**Draft package hash (2026-07-29):**
-
-```text
-0ab1681a40bee7363d1d399eb9dbe39b9198af8da82b71a07fbbb7c055be1e08
-```
-
-**Status: PENDING RATIFICATION** — hash will be recomputed and recorded here during the Freeze Ceremony.
+Computed as `SHA256( concatenation of all ratified ADR files, sorted by ID )`.
 
 Every Experiment records the `constitution_hash` it ran under (ADR-007).
 
-## Constitutional Scope Lock
+## Freeze Declaration
 
-During this freeze: **no new domain concepts may be added.** Only clarity fixes, contradiction repairs, and wording corrections are permitted (ADR-001A).
+```text
+═══════════════════════════════════════════════════
+AlphaOS Constitutional Freeze v1.0
+Date: 2026-07-29
+Git commit: (recorded at commit time)
+Reviewer: andikakrs2404
+Layer 0: ✅ Ratified
+Layer 1: ✅ Ratified
+Architectural Hash: be37bf97...
+═══════════════════════════════════════════════════
+```
+
+No implementation may change the constitutional layers without a new ADR that supersedes the old one. No new domain concepts may be added during implementation (Constitutional Scope Lock, ADR-001A).
 
 ## Ratification Checklist
 
-- [ ] All terms trace to ADR-000A
-- [ ] No entity without ontology
-- [ ] No lifecycle without ontology
-- [ ] No contract without entity
-- [ ] No schema without contract
-- [ ] No implementation detail in Layers 0–1
-- [ ] No circular ADR dependencies (DAG verified)
-- [ ] Review passes: Consistency, Completeness, Minimality, Timelessness, Closure
-- [ ] Architectural Hash computed and recorded
-- [ ] Freeze declared: Layers 0–1 RATIFIED
+- [x] All terms trace to ADR-000A
+- [x] No entity without ontology
+- [x] No lifecycle without ontology
+- [x] No contract without entity
+- [x] No schema without contract
+- [x] No implementation detail in Layers 0–1
+- [x] No circular ADR dependencies (DAG verified)
+- [x] Review passes: Consistency, Completeness, Minimality, Timelessness, Closure
+- [x] Architectural Hash computed and recorded
+- [x] Freeze declared: Layers 0–1 RATIFIED

@@ -1,7 +1,7 @@
 # ADR-000: Vision, Philosophy, and Invariants
 
 - **Layer:** 0 (Constitution)
-- **Status:** Draft
+- **Status:** Ratified
 - **Date:** 2026-07-29
 
 ## Context

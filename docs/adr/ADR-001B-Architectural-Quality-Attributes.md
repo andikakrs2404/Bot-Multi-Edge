@@ -1,7 +1,7 @@
 # ADR-001B: Architectural Quality Attributes
 
 - **Layer:** 0 (Constitution)
-- **Status:** Draft
+- **Status:** Ratified
 - **Date:** 2026-07-29
 - **Depends On:** ADR-001A
 

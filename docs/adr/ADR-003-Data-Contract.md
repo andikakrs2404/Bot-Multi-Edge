@@ -1,7 +1,7 @@
 # ADR-003: Data Contract
 
 - **Layer:** 1 (Domain & Contracts)
-- **Status:** Draft
+- **Status:** Ratified
 - **Date:** 2026-07-29
 - **Depends On:** ADR-002A
 

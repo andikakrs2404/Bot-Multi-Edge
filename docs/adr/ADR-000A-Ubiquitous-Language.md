@@ -1,7 +1,7 @@
 # ADR-000A: Ubiquitous Language
 
 - **Layer:** 0 (Constitution)
-- **Status:** Draft
+- **Status:** Ratified
 - **Date:** 2026-07-29
 - **Depends On:** ADR-000
 

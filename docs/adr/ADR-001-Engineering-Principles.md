@@ -1,7 +1,7 @@
 # ADR-001: Engineering Principles
 
 - **Layer:** 0 (Constitution)
-- **Status:** Draft
+- **Status:** Ratified
 - **Date:** 2026-07-29
 - **Depends On:** ADR-000B
 

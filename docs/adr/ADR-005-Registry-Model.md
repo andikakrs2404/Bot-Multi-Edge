@@ -1,7 +1,7 @@
 # ADR-005: Registry Model (Feature & Label)
 
 - **Layer:** 1 (Domain & Contracts)
-- **Status:** Draft
+- **Status:** Ratified
 - **Date:** 2026-07-29
 - **Depends On:** ADR-004
 
