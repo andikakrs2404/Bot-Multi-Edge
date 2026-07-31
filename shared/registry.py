@@ -35,6 +35,7 @@ class RegistryEntry(Generic[T]):
     superseded_by: str | None = None
     constitution_hash: str = CONSTITUTION_HASH
     registry_version: int = 0  # global per-registry counter at entry time
+    _registry: object = field(default=None, repr=False, compare=False)
 
 
 class DuplicateActiveError(ValueError):
@@ -125,6 +126,7 @@ class Registry(Generic[T]):
             status=RegistryStatus.ACTIVE,
             created_by=created_by,
             registry_version=self._registry_version,
+            _registry=self,
         )
         self._entries.setdefault(entity_id, []).append(entry)
         return entry
@@ -146,6 +148,7 @@ class Registry(Generic[T]):
             superseded_by=successor_id,
             constitution_hash=entry.constitution_hash,
             registry_version=entry.registry_version,
+            _registry=self,
         )
         versions = self._entries[entity_id]
         versions[-1] = replaced
@@ -167,10 +170,40 @@ class Registry(Generic[T]):
             superseded_by=None,
             constitution_hash=entry.constitution_hash,
             registry_version=entry.registry_version,
+            _registry=self,
         )
         versions = self._entries[entity_id]
         versions[-1] = archived
         return archived
+
+    def replace_entry(self, entry: RegistryEntry[T],
+                      new_entity: T,
+                      new_status: RegistryStatus | None = None,
+                      constitution_hash: str | None = None) -> RegistryEntry[T]:
+        """Replace the ACTIVE entry's entity/status in place (same identity).
+
+        Used for lifecycle advancement (e.g. Evidence GENERATED → SUPPORTS).
+        History is preserved: the previous entity stays in the version list.
+        """
+        cur = self.latest_entry(entry.entity_id)
+        if cur is not entry and cur != entry:
+            raise ValueError("entry is not the current ACTIVE entry")
+        self._bump()
+        replaced = RegistryEntry(
+            entity_id=entry.entity_id,
+            entity=new_entity,
+            version=entry.version,
+            status=new_status or entry.status,
+            created_at=entry.created_at,
+            created_by=entry.created_by,
+            superseded_by=entry.superseded_by,
+            constitution_hash=constitution_hash or entry.constitution_hash,
+            registry_version=entry.registry_version,
+            _registry=self,
+        )
+        versions = self._entries[entry.entity_id]
+        versions[-1] = replaced
+        return replaced
 
     # ── validation (spec §7) ──
 
