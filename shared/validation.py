@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 
 REQUIRED_RAW_FIELDS = ("ts", "exchange", "symbol", "open", "high", "low", "close", "volume")
 NUMERIC_RAW_FIELDS = ("open", "high", "low", "close", "volume")
-MANIFEST_REQUIRED = ("dataset_id", "schema_version", "universe", "timeframe",
+MANIFEST_REQUIRED = ("dataset_id", "schema_version", "timeframe",
                      "date_range", "content_hash")
 
 
@@ -63,6 +63,8 @@ def validate_manifest(manifest: dict) -> ValidationResult:
     for f in MANIFEST_REQUIRED:
         if f not in manifest:
             errors.append(f"manifest missing field: {f}")
+    if not (manifest.get("universe") or manifest.get("universe_id")):
+        errors.append("manifest missing universe/universe_id field")
     if "date_range" in manifest:
         dr = manifest["date_range"]
         if not (isinstance(dr, (list, tuple)) and len(dr) == 2):
@@ -90,10 +92,13 @@ def verify_content_integrity(manifest: dict, actual_text: str) -> ValidationResu
     return ValidationResult(ok=True)
 
 
+_NON_IDENTITY_FIELDS = {"dataset_id", "created_at"}  # provenance, not identity
+
+
 def dataset_id_of(manifest: dict) -> str:
     """Deterministic DatasetID = SHA256(canonical manifest without
-    the self-referential dataset_id field) (ADR-004)."""
-    body = {k: v for k, v in manifest.items() if k != "dataset_id"}
+    self-referential / provenance fields) (ADR-004)."""
+    body = {k: v for k, v in manifest.items() if k not in _NON_IDENTITY_FIELDS}
     canonical = json.dumps(body, sort_keys=True, default=str)
     return content_hash_of(canonical)
 
