@@ -40,9 +40,8 @@ class BreadthEngine:
         # V1: Recompute all breadth metrics on any update.
         # V2: Could be optimized to update only relevant metrics.
         self._version += 1
-        now = time.monotonic()
-
-        all_states = self._norm.get_all_states() # Needs to be implemented in NormalizationEngine
+        # V1: Recompute all breadth metrics on any update.
+        all_states = self._norm.get_all_states()
         if not all_states:
             return
 

@@ -9,7 +9,7 @@ import logging
 from typing import TYPE_CHECKING
 
 from .models import (
-    NormalizedFeatureUpdateEvent, MarketBreadth, RankedSymbol
+    NormalizedFeature, NormalizedFeatureUpdateEvent, MarketBreadth, RankedSymbol
 )
 from .registry import FeatureId
 
