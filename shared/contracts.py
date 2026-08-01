@@ -1,13 +1,3 @@
-"""AlphaOS shared contracts (ADR-002/003/004/005).
-
-Constitution hash: be37bf97508691f93557849e1b05d7a1bf2c7be89029cc7f9dcbc77ba964d8cd
-Constitutional Freeze v1.0 — Layer 0 & 1 ratified 2026-07-29.
-
-This module is the ONLY place where domain entities are defined for both
-realms (research + production). It is dependency-free (stdlib only) per
-ADR-001 principle 7 (enforced dependency direction).
-"""
-
 from __future__ import annotations
 
 import hashlib
@@ -22,6 +12,9 @@ CONSTITUTION_HASH = "be37bf97508691f93557849e1b05d7a1bf2c7be89029cc7f9dcbc77ba96
 def utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
+class SignalDirection(str, Enum):
+    LONG = "LONG"
+    SHORT = "SHORT"
 
 # ── Lifecycle states (ADR-002A) ──
 
@@ -160,12 +153,32 @@ class Evidence:
 
 
 @dataclass(frozen=True, slots=True)
+class PortfolioAllocation:
+    """Configures an Edge's deployment intent within a Portfolio."""
+    edge_id: str
+    weight: float
+    direction: SignalDirection
+
+    def __post_init__(self) -> None:
+        if self.weight <= 0:
+            raise ValueError("weight must be > 0")
+
+
+@dataclass(frozen=True, slots=True)
 class Portfolio:
     """Curated allocation over ACTIVE edges (ADR-002)."""
     portfolio_id: str
     objective: str = "max_sharpe"
-    allocations: tuple[tuple[str, float], ...] = ()  # (edge_id, weight)
+    policy_id: str | None = None
+    allocations: tuple[PortfolioAllocation, ...] = ()
     status: PortfolioStatus = PortfolioStatus.DRAFT
+
+    def __post_init__(self) -> None:
+        if self.allocations:
+            if abs(sum(a.weight for a in self.allocations) - 1.0) > 1e-9:
+                raise ValueError("allocation weights must sum to 1.0")
+            if len({a.edge_id for a in self.allocations}) != len(self.allocations):
+                raise ValueError("duplicate edge allocation")
 
 
 @dataclass(frozen=True, slots=True)
@@ -176,6 +189,29 @@ class ProductionDecision:
     triggered_edges: tuple[str, ...]
     decision: str            # BUY | SELL | HOLD | SKIP
     confidence: float
+    ts: datetime = field(default_factory=utcnow)
+
+
+@dataclass(frozen=True, slots=True)
+class DecisionSignal:
+    signal_id: str
+    edge_id: str
+    rule_id: str
+    experiment_id: str
+    portfolio_id: str
+    symbol: str
+    market_snapshot_id: str
+    direction: SignalDirection
+    confidence: float
+    ts: datetime = field(default_factory=utcnow)
+
+
+@dataclass(frozen=True, slots=True)
+class SignalBatch:
+    batch_id: str
+    portfolio_id: str
+    market_snapshot_id: str
+    signals: tuple[DecisionSignal, ...]
     ts: datetime = field(default_factory=utcnow)
 
 
@@ -206,6 +242,22 @@ def make_dataset_id(manifest: dict) -> str:
 
 def make_rule_id(canonical_ast: str) -> str:
     return content_hash({"ast": canonical_ast})
+
+
+def make_signal_id(edge_id: str, portfolio_id: str, snapshot_id: str,
+                   symbol: str, direction: SignalDirection) -> str:
+    return content_hash({
+        "edge_id": edge_id, "portfolio_id": portfolio_id,
+        "snapshot_id": snapshot_id, "symbol": symbol, "direction": direction
+    })
+
+
+def make_batch_id(portfolio_id: str, snapshot_id: str,
+                  signal_ids: tuple[str, ...]) -> str:
+    return content_hash({
+        "portfolio_id": portfolio_id, "snapshot_id": snapshot_id,
+        "signal_ids": tuple(sorted(signal_ids))
+    })
 
 
 def make_id(*parts: str, prefix: str = "ID") -> str:

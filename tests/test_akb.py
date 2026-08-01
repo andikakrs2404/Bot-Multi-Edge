@@ -9,7 +9,15 @@ from shared.akb import (
     link_evidence_trace,
     register_production_decision,
 )
-from shared.contracts import Edge, EdgeStatus, Portfolio, ProductionDecision, RelationshipType
+from shared.contracts import (
+    Edge,
+    EdgeStatus,
+    Portfolio,
+    PortfolioAllocation,
+    ProductionDecision,
+    RelationshipType,
+    SignalDirection,
+)
 from shared.evidence import Evidence, EvidenceStatus, evidence_id
 
 
@@ -95,7 +103,10 @@ class TestQueryGuarantees:
 
     def test_production_decision_trace(self):
         akb, edge, _, _ = build_graph()
-        portfolio = Portfolio(portfolio_id="P-1", allocations=((edge.edge_id, 1.0),))
+        portfolio = Portfolio(
+            portfolio_id="P-1",
+            allocations=(PortfolioAllocation(edge.edge_id, 1.0, SignalDirection.LONG),),
+        )
         akb.add_node(NodeType.PORTFOLIO, portfolio.portfolio_id, portfolio)
         akb.add_relationship(RelationshipType.ALLOCATED_TO, NodeType.EDGE, edge.edge_id,
                              NodeType.PORTFOLIO, portfolio.portfolio_id)
