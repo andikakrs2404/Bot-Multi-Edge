@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 from dataclasses import dataclass, field, replace
 from datetime import datetime
 from enum import Enum
@@ -136,6 +137,57 @@ def evidence_id(candidate_id: str, metrics: dict) -> str:
     return f"EVID-{_sha(candidate_id, canonical)[:20]}"
 
 
+# ── metrics ──
+
+MAX_PROFIT_FACTOR = 999.0
+ANNUALIZATION_FACTOR = 252
+
+# sample std (ddof=1) or tiny to avoid div-by-zero
+
+
+def _sample_std(xs: list[float]) -> float:
+    n = len(xs)
+    if n < 2:
+        return 0.0
+    mean = sum(xs) / n
+    return math.sqrt(sum((x - mean) ** 2 for x in xs) / (n - 1))
+
+
+def compute_metrics(returns: list[float], n_total: int) -> dict:
+    """Return-based candidate metrics (spec §5a).
+
+    Deterministic. n==0 → zero metrics (valid result, not error).
+    """
+    n = len(returns)
+    if n == 0:
+        return {"trade_count": 0, "coverage": 0.0, "hit_rate": 0.0,
+                "expectancy": 0.0, "profit_factor": 0.0,
+                "max_drawdown": 0.0, "sharpe": 0.0}
+    gross_win = sum(r for r in returns if r > 0)
+    gross_loss = -sum(r for r in returns if r < 0)
+    pf = MAX_PROFIT_FACTOR if gross_loss == 0.0 else gross_win / gross_loss
+    mean = sum(returns) / n
+    sd = _sample_std(returns)
+    sharpe = (mean / sd * math.sqrt(ANNUALIZATION_FACTOR)) if sd else 0.0
+    # max drawdown: peak-to-trough of cumulative returns, positive
+    peak = 0.0
+    max_dd = 0.0
+    cum = 0.0
+    for r in returns:
+        cum += r
+        peak = max(peak, cum)
+        max_dd = max(max_dd, peak - cum)
+    return {
+        "trade_count": n,
+        "coverage": n / n_total if n_total else 0.0,
+        "hit_rate": sum(1 for r in returns if r > 0) / n,
+        "expectancy": mean,
+        "profit_factor": pf,
+        "max_drawdown": max_dd,
+        "sharpe": sharpe,
+    }
+
+
 # ── runner ──
 
 @dataclass(frozen=True, slots=True)
@@ -197,6 +249,10 @@ class ExperimentRunner:
         data = table.to_pylist()
         if not data or "label_HIT_TARGET" not in table.column_names:
             raise ValueError("snapshot must contain label_HIT_TARGET (research snapshot)")
+        if "label_RETURN_1h" not in table.column_names:
+            raise ValueError(
+                "snapshot must contain label_RETURN_1h "
+                "(return-based metrics, spec experiment-protocol §5a)")
 
         # per-symbol percentile/z-score (in-sample; rolling normalization later)
         ctx = _build_context(data)
@@ -206,12 +262,11 @@ class ExperimentRunner:
         for rid in rule_ids:
             ast = asts[rid]
             matched = [row for row in data if _eval_row(ast, row, ctx)]
-            sample = len(matched)
-            hits = sum(1 for row in matched if row["label_HIT_TARGET"] == 1.0)
-            hit_rate = hits / sample if sample else 0.0
-            metrics = {"sample": sample, "hit_rate": hit_rate}
+            returns = [row["label_RETURN_1h"] for row in matched]
+            metrics = compute_metrics(returns, len(data))
             cid = candidate_id(exp.experiment_id, rid)
-            passed = sample >= self.min_sample and hit_rate >= self.min_hit_rate
+            passed = (metrics["trade_count"] >= self.min_sample
+                      and metrics["hit_rate"] >= self.min_hit_rate)
             cand = Candidate(candidate_id=cid, rule_id=rid,
                              experiment_id=exp.experiment_id, metrics=metrics,
                              status=(CandidateStatus.PASSED if passed

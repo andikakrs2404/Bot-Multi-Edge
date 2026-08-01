@@ -56,12 +56,45 @@ candidate_id = CAND-<sha256(experiment_id + rule_id)[:20]>
 rule_id, experiment_id, metrics, status
 ```
 
-Metrics (this stage): `sample`, `hit_rate`.
+## 5a. Metrics (return-based, v0.1)
 
-Lifecycle: `GENERATED → VALIDATING → PASSED | FAILED`
+Snapshot MUST contain `label_RETURN_1h` (forward 1-bar return per row)
+in addition to `label_HIT_TARGET`. Missing return column → hard error
+(fail-closed, ADR-000B) — never silently fall back to hit-rate-only.
 
-Acceptance (defaults, configurable): `sample >= 300 AND hit_rate >= 0.55`
-(per research schema; runner takes min_sample/min_hit_rate params).
+Matched rows (rule fired) produce a return series r_1..r_n, n = trade_count:
+
+```text
+trade_count     = n
+coverage        = n / total_rows
+hit_rate        = count(r > 0) / n
+expectancy      = mean(r)
+profit_factor   = gross_win / abs(gross_loss)
+                  gross_win  = sum(r > 0)
+                  gross_loss = sum(r < 0)
+                  gross_loss == 0 → MAX_PROFIT_FACTOR = 999.0
+sharpe          = mean(r) / (std(r, ddof=1) or tiny) * sqrt(ANNUALIZATION_FACTOR)
+max_drawdown    = -min_k(cum_k / peak_k - 1)        # positive number
+```
+
+Constants:
+
+```text
+MAX_PROFIT_FACTOR = 999.0   (json-serializable, deterministic)
+ANNUALIZATION_FACTOR = 252  (configurable via MetricPolicy; per-timeframe later)
+```
+
+`n == 0` → all metrics zero, `trade_count == 0` (valid experiment
+result, not an error).
+
+Metrics dict:
+
+```text
+{
+  "trade_count", "coverage", "hit_rate", "expectancy",
+  "sharpe", "profit_factor", "max_drawdown"
+}
+```
 
 ## 6. Evidence
 
@@ -75,10 +108,12 @@ metrics, artifacts, created_at
 
 ## 7. Evaluation Semantics
 
-- Snapshot must contain `label_HIT_TARGET` (research snapshot, ADR-005).
+- Snapshot must contain `label_HIT_TARGET` AND `label_RETURN_1h`
+  (research snapshot, ADR-005; return column mandatory since v0.1
+  metrics expansion).
 - Per symbol: percentile + z-score computed over the snapshot's rows
   (in-sample; rolling normalization is a later stage — `ponytail`).
-- Rule matched at row ⇒ sample. `hit_rate = mean(HIT_TARGET | matched)`.
+- Rule matched at row ⇒ trade. Metrics from return series (see §5a).
 
 ## 8. Artifacts
 

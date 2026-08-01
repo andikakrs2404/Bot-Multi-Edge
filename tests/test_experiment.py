@@ -28,10 +28,11 @@ from shared.rules import rule_id
 
 def make_snapshot(tmp_path, n_bars=400, symbols=("BTCUSDT", "ETHUSDT"),
                   feature="RSI_14_CLOSE"):
-    """Research snapshot: one feature + label_HIT_TARGET.
+    """Research snapshot: one feature + labels (HIT_TARGET + RETURN_1h).
 
     RSI constructed so rule (GT RSI P90) matches ~10% of rows, half of
     which hit target → hit_rate ~0.5 (below/above threshold adjustable).
+    Return = +1% on hit, -1% on miss (deterministic, bounded).
     """
     rows = []
     for sym in symbols:
@@ -39,13 +40,14 @@ def make_snapshot(tmp_path, n_bars=400, symbols=("BTCUSDT", "ETHUSDT"),
             ts = 1_700_000_000_000 + i * 1_800_000
             rsi_val = 50.0 + 40.0 * math.sin(i / 7.0)  # -10..90
             hit = 1.0 if (i % 4 == 0 and rsi_val > 80) else 0.0
+            ret = 0.01 if hit == 1.0 else -0.01
             rows.append({"ts": ts, "symbol": sym, "exchange": "binance_futures",
                          "tier": "A", feature: rsi_val,
-                         "label_HIT_TARGET": hit})
+                         "label_HIT_TARGET": hit, "label_RETURN_1h": ret})
     schema = pa.schema([
         ("ts", pa.int64()), ("symbol", pa.string()), ("exchange", pa.string()),
         ("tier", pa.string()), (feature, pa.float64()),
-        ("label_HIT_TARGET", pa.float64()),
+        ("label_HIT_TARGET", pa.float64()), ("label_RETURN_1h", pa.float64()),
     ])
     t = pa.Table.from_arrays(
         [pa.array([r[k] for r in rows]) for k in schema.names], schema=schema)
@@ -121,8 +123,9 @@ class TestRunner:
         c = res.candidates[0]
         assert c.experiment_id == res.experiment.experiment_id
         assert c.rule_id == rule
-        assert c.metrics["sample"] > 0
+        assert c.metrics["trade_count"] > 0
         assert 0.0 <= c.metrics["hit_rate"] <= 1.0
+        assert c.metrics["sharpe"] != 0.0  # return-based now
         ev = res.evidence[0]
         assert ev.candidate_id == c.candidate_id
         assert ev.experiment_id == res.experiment.experiment_id
@@ -140,7 +143,7 @@ class TestRunner:
         res2 = runner2.run(sd, "ds1", ["(GT RSI_14_CLOSE P80)"], 1, 1, 1)
         assert res2.candidates[0].status == CandidateStatus.PASSED
 
-    def test_requires_label(self, tmp_path):
+    def test_requires_labels(self, tmp_path):
         rows = [{"ts": 1, "symbol": "X", "exchange": "e", "tier": "A",
                  "RSI_14_CLOSE": 50.0}]
         schema = pa.schema([("ts", pa.int64()), ("symbol", pa.string()),
@@ -153,6 +156,23 @@ class TestRunner:
         pq.write_table(t, sd / "snapshot.parquet")
         runner = ExperimentRunner()
         with pytest.raises(ValueError):
+            runner.run(sd, "ds1", ["(GT RSI_14_CLOSE P80)"], 1, 1, 1)
+
+    def test_requires_return_column(self, tmp_path):
+        """Return column mandatory since metrics expansion (fail-closed)."""
+        rows = [{"ts": 1, "symbol": "X", "exchange": "e", "tier": "A",
+                 "RSI_14_CLOSE": 50.0, "label_HIT_TARGET": 1.0}]
+        schema = pa.schema([("ts", pa.int64()), ("symbol", pa.string()),
+                            ("exchange", pa.string()), ("tier", pa.string()),
+                            ("RSI_14_CLOSE", pa.float64()),
+                            ("label_HIT_TARGET", pa.float64())])
+        t = pa.Table.from_arrays([pa.array([r[k] for r in rows]) for k in schema.names],
+                                 schema=schema)
+        sd = tmp_path / "snap3"
+        sd.mkdir()
+        pq.write_table(t, sd / "snapshot.parquet")
+        runner = ExperimentRunner()
+        with pytest.raises(ValueError, match="label_RETURN_1h"):
             runner.run(sd, "ds1", ["(GT RSI_14_CLOSE P80)"], 1, 1, 1)
 
     def test_rule_by_registry_id(self, tmp_path):
