@@ -46,6 +46,19 @@ class TestInvariants:
         with pytest.raises(ValueError, match="empty"):
             snap({})
 
+    def test_blank_symbol_rejected(self):
+        with pytest.raises(ValueError, match="symbol"):
+            MarketSnapshot(
+                snapshot_id="x",
+                symbol="   ",
+                timestamp=datetime(2026, 7, 31, tzinfo=timezone.utc),
+                feature_values={"RSI_14": 70.0},
+            )
+
+    def test_blank_feature_name_rejected(self):
+        with pytest.raises(ValueError, match="feature name"):
+            snap({"": 70.0})
+
     def test_nan_rejected(self):
         with pytest.raises(ValueError, match="NaN|nan|finite"):
             snap({"RSI_14": math.nan})

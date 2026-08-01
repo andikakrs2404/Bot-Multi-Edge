@@ -23,11 +23,15 @@ class MarketSnapshot:
     feature_values: dict[str, float]
 
     def __post_init__(self) -> None:
+        if not self.symbol.strip():
+            raise ValueError("symbol must not be blank")
         if not self.feature_values:
             raise ValueError("feature_values must not be empty")
         if self.timestamp.tzinfo is None:
             raise ValueError("timestamp must be timezone-aware (UTC)")
         for name, value in self.feature_values.items():
+            if not name.strip():
+                raise ValueError("feature name must not be blank")
             if not math.isfinite(value):
                 raise ValueError(f"feature {name} must be finite, got {value}")
 
