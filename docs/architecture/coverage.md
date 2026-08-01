@@ -69,3 +69,10 @@ Update this file when:
 - a new ADR is ratified
 - an engine module changes scope
 - test count shifts materially
+
+## Pending ADRs (draft, NOT ratified)
+
+| ADR | Title | Status | Note |
+|-----|-------|--------|------|
+| ADR-010 | Execution Domain | 📝 draft | OrderIntent/Order/ExecutionReport/Position. No code until ratified. |
+| ADR-011 | Feedback Domain | 📝 draft | Outcome/DriftObservation → new Evidence. No code until ratified. |
